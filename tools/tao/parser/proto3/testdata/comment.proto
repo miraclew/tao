@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package commentsvc;
+
+message Comment {
+    string object_id = 1;
+    string content = 2;
+}
+
+message CreateCommentRequest {
+    Comment comment = 1;
+}
+
+message CreateCommentResponse {
+    string id = 1;
+}
+
+message DeleteCommentRequest {
+    string id = 1;
+}
+
+message DeleteCommentResponse {
+    string results = 1;
+}
+
+message UpdateCommentRequest {
+    string id = 1;
+    string content = 2;
+}
+
+message UpdateCommentResponse {
+    string results = 1;
+}
+
+message QueryCommentsRequest {
+    string query = 1;
+    int64 offset = 2;
+    int32 limit = 3;
+    map<string, string> filter = 4;
+    string sort = 5;
+}
+
+message QueryCommentsResponse {
+    repeated Comment comments = 1;
+}
+
+service ContentReportService {
+    rpc CreateComment(CreateCommentRequest) returns (CreateCommentResponse);
+    rpc DeleteComment(DeleteCommentRequest) returns (DeleteCommentResponse);
+    rpc UpdateComment(UpdateCommentRequest) returns (UpdateCommentResponse);
+    rpc QueryComments(QueryCommentsRequest) returns (QueryCommentsResponse);
+}
