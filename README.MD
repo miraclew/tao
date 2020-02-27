@@ -62,6 +62,7 @@ enum QuestionType {
 
 // Resource
 message Question {
+    option (model) = true;
     int64 Id = 1;
     int64 UserId = 2;
     int64 TopicId = 3;
@@ -131,6 +132,7 @@ message QueryResponse {
 
 // Event (subscribe events from this service)
 service Event {
+    option (internal) = true;
     rpc HandleCreated(CreatedEvent) returns (Empty);
     rpc HandleDeleted(DeletedEvent) returns (Empty);
     rpc HandleUpdated(UpdatedEvent) returns (Empty);
