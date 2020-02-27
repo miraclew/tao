@@ -214,5 +214,6 @@ The sdk files can be used to interact with services.
  * Dart client for Flutter
  
 ## TODO
- * Android Java client (TODO)
+ * Android Java/Kotlin client (TODO)
  * iOS Swift client (TODO) 
+ * Support JAVA project
