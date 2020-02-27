@@ -58,6 +58,9 @@ func MapProto2Doc(proto *parser.Result) (*OpenAPIV3, error) {
 		}
 		var properties []Schema
 		for _, messageEntry := range msg.Entries {
+			if messageEntry.Field == nil {
+				continue
+			}
 			property := MapField(messageEntry.Field)
 			properties = append(properties, property)
 		}

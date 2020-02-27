@@ -8,6 +8,7 @@ require (
 	github.com/Masterminds/sprig v2.22.0+incompatible
 	github.com/alecthomas/participle v0.4.1
 	github.com/alecthomas/repr v0.0.0-20181024024818-d37bc2a10ba1
+	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-redis/redis v6.15.2+incompatible
 	github.com/google/uuid v1.1.1 // indirect
@@ -17,7 +18,9 @@ require (
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/labstack/echo/v4 v4.1.14
 	github.com/mitchellh/copystructure v1.0.0 // indirect
+	github.com/mitchellh/reflectwalk v1.0.1 // indirect
 	github.com/pkg/errors v0.9.1
 	github.com/redis-go/redis v0.0.0-20190129163758-e7bb29b08926
 	github.com/urfave/cli/v2 v2.1.1
+	golang.org/x/crypto v0.0.0-20200221231518-2aa609cf4a9d // indirect
 )

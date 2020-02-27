@@ -21,6 +21,9 @@ func (s2 serviceMapper) Map(s *proto3.Service) (*Service, error) {
 	}
 
 	for _, entry := range s.Entry {
+		if entry.Method == nil {
+			continue
+		}
 		p, _ := s2.TypeMapper.Map(entry.Method.Request)
 		r, _ := s2.TypeMapper.Map(entry.Method.Response)
 
