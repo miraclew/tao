@@ -1,4 +1,6 @@
-A protocol and interface first microservice approach
+Tao is a protocol and interface first micro-service approach.
+
+This project is in very early development stage, things may changes frequently.
 
 ## The Tao approach
 The Tao approach includes
@@ -154,107 +156,9 @@ message UpdatedEvent {
 tao api
 ```
 
-## Code organization for multi micro-services project
+## Demo project
 
-```
-.
-├── answer
-│   ├── answer.proto
-│   ├── api.go
-│   ├── client.go
-│   ├── event.go
-│   └── svc
-│       ├── handler.api.go
-│       ├── handler.event.go
-│       ├── repo.go
-│       ├── repo.mysql.go
-│       ├── repo.redis.go
-│       └── service.go
-├── cmd
-│   ├── douyin-api
-│      ├── Dockerfile
-│      ├── Jenkinsfile
-│      ├── douyin
-│      └── main.go
-├── config
-│   └── config.go
-├── doc
-│   ├── dart
-│   │   ├── answer.dart
-│   │   ├── captcha.dart
-│   │   ├── like.dart
-│   │   ├── question.dart
-│   │   ├── session.dart
-│   │   ├── topic.dart
-│   │   └── user.dart
-│   ├── openapiv3
-│   │   ├── answer.yaml
-│   │   ├── captcha.yaml
-│   │   ├── question.yaml
-│   │   ├── session.yaml
-│   │   ├── topic.yaml
-│   │   └── user.yaml
-│   └── sql
-│       ├── answer.sql
-│       ├── captcha.sql
-│       ├── like.sql
-│       ├── question.sql
-│       ├── session.sql
-│       ├── topic.sql
-│       └── user.sql
-├── like
-│   ├── api.go
-│   ├── client.go
-│   ├── event.go
-│   ├── like.proto
-│   └── svc
-│       ├── handler.api.go
-│       ├── handler.event.go
-│       ├── repo.go
-│       ├── repo.mysql.go
-│       ├── repo.redis.go
-│       └── service.go
-├── locator
-│   └── locator.go
-├── question
-│   ├── api.go
-│   ├── client.go
-│   ├── event.go
-│   ├── question.proto
-│   └── svc
-│       ├── handler.api.go
-│       ├── handler.event.go
-│       ├── repo.go
-│       ├── repo.mysql.go
-│       ├── repo.redis.go
-│       ├── repo_test.go
-│       └── service.go
-├── topic
-│   ├── api.go
-│   ├── client.go
-│   ├── event.go
-│   ├── svc
-│   │   ├── handler.api.go
-│   │   ├── handler.event.go
-│   │   ├── repo.go
-│   │   ├── repo.mysql.go
-│   │   ├── repo.redis.go
-│   │   └── service.go
-│   └── topic.proto
-└── user
-    ├── api.go
-    ├── client.go
-    ├── event.go
-    ├── svc
-    │   ├── handler.api.go
-    │   ├── handler.event.go
-    │   ├── repo.go
-    │   ├── repo.mysql.go
-    │   ├── repo.redis.go
-    │   └── service.go
-    └── user.proto
-
-```
+[Demo Project](https://github.com/miraclew/tao-demo)
  
 ## Services intercommunication
 
@@ -308,6 +212,7 @@ func (h EventHandler) onAnswerCreated(ctx context.Context, req *answer.CreatedEv
 The sdk files can be used to interact with services.
 
  * Dart client for Flutter
+ 
+## TODO
  * Android Java client (TODO)
  * iOS Swift client (TODO) 
- 
