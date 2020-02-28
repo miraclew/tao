@@ -9,6 +9,8 @@ The Tao approach includes
  * A simple ioc container for service locate
  * Several support packages ```github.com/miraclew/tao/pkg```
 
+This project is inspired by a [Youtube presentation](https://www.youtube.com/watch?v=j6ow-UemzBc)
+ 
 ### The ```tao``` command
 ```tao``` command is the core tool to generate code/documents/sql etc.
 
