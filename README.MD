@@ -24,6 +24,10 @@ sub-commands
  * ```tao dart``` generate dart client code
  * ```tao android``` generate android client sdk. TODO
  * ```tao ios``` generate iOS client sdk. TODO
+
+### How ```tao``` generators works
+
+![image.png](doc/images/tao-generators.png)
  
 ### locator: the ioc container
 We introduce a locator package as the IOC container.
