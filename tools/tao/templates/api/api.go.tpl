@@ -1,9 +1,9 @@
-{{- /*gotype: e.coding.net/miraclew/tao/tools/tao/mapper/golang.ProtoGolang*/ -}}
+{{- /*gotype: github.com/miraclew/tao/tools/tao/mapper/golang.ProtoGolang*/ -}}
 package {{.Pkg}}
 
 import (
 	"context"
-	"e.coding.net/miraclew/tao/pkg/pb"
+	"github.com/miraclew/tao/pkg/pb"
 	"time"
 )
 

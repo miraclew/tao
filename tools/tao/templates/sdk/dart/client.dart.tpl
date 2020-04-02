@@ -1,4 +1,4 @@
-{{- /*gotype: e.coding.net/miraclew/tao/tools/tao/mapper/ir.ProtoIR*/ -}}
+{{- /*gotype: github.com/miraclew/tao/tools/tao/mapper/ir.ProtoIR*/ -}}
 import 'package:douyin/data/client.dart';
 
 {{- range .Enums }}

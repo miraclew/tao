@@ -1,9 +1,9 @@
-{{- /*gotype: e.coding.net/miraclew/tao/tools/tao/mapper/golang.ProtoGolang*/ -}}
+{{- /*gotype: github.com/miraclew/tao/tools/tao/mapper/golang.ProtoGolang*/ -}}
 package {{.Pkg}}svc
 
 import (
 	"{{.Module}}/{{.Pkg}}"
-	"e.coding.net/miraclew/tao/pkg/ac"
+	"github.com/miraclew/tao/pkg/ac"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
 )

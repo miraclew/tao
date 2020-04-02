@@ -1,11 +1,11 @@
-{{- /*gotype: e.coding.net/miraclew/tao/tools/tao/mapper/golang.ProtoGolang*/ -}}
+{{- /*gotype: github.com/miraclew/tao/tools/tao/mapper/golang.ProtoGolang*/ -}}
 package {{.Pkg}}svc
 
 import (
 	"context"
 	"database/sql"
 	"{{.Module}}/{{.Pkg}}"
-	"e.coding.net/miraclew/tao/pkg/slice"
+	"github.com/miraclew/tao/pkg/slice"
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	"strings"

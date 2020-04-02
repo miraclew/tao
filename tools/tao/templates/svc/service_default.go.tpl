@@ -1,4 +1,4 @@
-{{- /*gotype: e.coding.net/miraclew/tao/tools/tao/mapper/golang.ProtoGolang*/ -}}
+{{- /*gotype: github.com/miraclew/tao/tools/tao/mapper/golang.ProtoGolang*/ -}}
 package {{.Pkg}}svc
 
 import (
@@ -6,8 +6,8 @@ import (
     "database/sql"
     "{{.Module}}/locator"
     "{{.Module}}/{{.Pkg}}"
-    "e.coding.net/miraclew/tao/pkg/ac"
-    "e.coding.net/miraclew/tao/pkg/ce"
+    "github.com/miraclew/tao/pkg/ac"
+    "github.com/miraclew/tao/pkg/ce"
     _ "github.com/go-sql-driver/mysql"
     "github.com/jmoiron/sqlx"
     "github.com/labstack/echo/v4"

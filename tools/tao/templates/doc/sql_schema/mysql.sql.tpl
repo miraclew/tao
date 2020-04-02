@@ -1,4 +1,4 @@
-{{- /*gotype: e.coding.net/miraclew/tao/tools/tao/mapper/sqlschema.CreateTables*/ -}}
+{{- /*gotype: github.com/miraclew/tao/tools/tao/mapper/sqlschema.CreateTables*/ -}}
 {{range .Items}}
 CREATE TABLE `{{.TableName}}` (
   {{- range .Columns }}

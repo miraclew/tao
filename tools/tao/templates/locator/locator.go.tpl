@@ -1,4 +1,4 @@
-{{- /*gotype: e.coding.net/miraclew/tao/tools/tao/mapper.Locator*/ -}}
+{{- /*gotype: github.com/miraclew/tao/tools/tao/mapper.Locator*/ -}}
 package locator
 
 import (
@@ -6,7 +6,7 @@ import (
 	{{- range .Resources}}
 	"{{.Module}}/{{.Pkg}}"
 	{{- end}}
-	"e.coding.net/miraclew/tao/pkg/broker"
+	"github.com/miraclew/tao/pkg/broker"
 	"fmt"
 )
 

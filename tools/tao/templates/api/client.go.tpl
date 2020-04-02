@@ -1,13 +1,13 @@
-{{- /*gotype: e.coding.net/miraclew/tao/tools/tao/mapper/golang.ProtoGolang*/ -}}
+{{- /*gotype: github.com/miraclew/tao/tools/tao/mapper/golang.ProtoGolang*/ -}}
 package {{.Pkg}}
 
 import (
     "bytes"
     "context"
-    "e.coding.net/miraclew/tao/pkg/ce"
-    "e.coding.net/miraclew/tao/pkg/pb"
-    "e.coding.net/miraclew/tao/pkg/ac"
-    "e.coding.net/miraclew/tao/pkg/auth"
+    "github.com/miraclew/tao/pkg/ce"
+    "github.com/miraclew/tao/pkg/pb"
+    "github.com/miraclew/tao/pkg/ac"
+    "github.com/miraclew/tao/pkg/auth"
     "encoding/json"
     "github.com/pkg/errors"
     "io/ioutil"
