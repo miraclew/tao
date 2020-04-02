@@ -1,10 +1,9 @@
 package golang
 
 import (
-	"fmt"
-
 	"github.com/miraclew/tao/pkg/slice"
 	"github.com/miraclew/tao/tools/tao/parser/proto3"
+	"fmt"
 )
 
 func Map(proto *proto3.Proto) (*ProtoGolang, error) {
@@ -36,7 +35,7 @@ func Map(proto *proto3.Proto) (*ProtoGolang, error) {
 	mm := MessageMapper{FieldMapper{tm, enums}}
 	sm := ServiceMapper{tm}
 
-	var ignoreMessages = slice.StringSlice{"Time", "Any"}
+	var ignoreMessages = slice.StringSlice{"Time", "Any", "Key"}
 	var messages []*Message
 	for _, entry := range proto.Entries {
 		if entry.Message != nil {

@@ -1,9 +1,8 @@
 package dart
 
 import (
-	"fmt"
-
 	"github.com/miraclew/tao/tools/tao/parser/proto3"
+	"fmt"
 )
 
 type typeMapper int

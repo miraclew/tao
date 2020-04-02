@@ -1,10 +1,9 @@
 package dart
 
 import (
-	"strings"
-
 	"github.com/miraclew/tao/tools/tao/mapper/ir"
 	"github.com/miraclew/tao/tools/tao/parser/proto3"
+	"strings"
 )
 
 type fieldMapper struct {

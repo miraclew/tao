@@ -1,4 +1,4 @@
-{{- /*gotype: github.com/miraclew/tao/tools/tao/mapper/ir.ProtoIR*/ -}}
+{{- /*gotype: e.coding.net/miraclew/tao/tools/tao/mapper/ir.ProtoIR*/ -}}
 import 'package:douyin/data/client.dart';
 
 {{- range .Enums }}
@@ -7,6 +7,7 @@ enum {{.Name}} { {{range .Values}} {{.Name}}, {{end }} }
 
 class {{.Name}}Service {
   static final {{.Name}}Service _singleton = new {{.Name}}Service._internal();
+  static const app = "{{.App}}";
 
   factory {{.Name}}Service() {
     return _singleton;
@@ -14,7 +15,7 @@ class {{.Name}}Service {
   {{.Name}}Service._internal();
 {{range .Service.Methods}}
   Future<{{.Response}}> {{.Name}}({{.Request}} req) async {
-    var data = await ApiClient().rpc("/v1/{{$.Name|lower}}/{{.Name|lower}}", req);
+    var data = await ApiClient().rpc(app, "/v1/{{$.Name|lower}}/{{.Name|lower}}", req);
     return {{.Response}}.fromJson(data);
   }
 {{end -}}
@@ -34,7 +35,7 @@ class {{.Name}} {
         {{- if .Type.Scalar}}
         {{.Name}}: {{.Type.String}}.from(data['{{.Name|title}}']),
         {{else}}
-        {{.Name}}: data['Results'] != null ? List.of(data['{{.Name|title}}']).map((e) => {{.Type.Name}}.fromJson(e)).toList() : [],
+        {{.Name}}: data['{{.Name|title}}'] != null ? List.of(data['{{.Name|title}}']).map((e) => {{.Type.Name}}.fromJson(e)).toList() : [],
         {{end}}
       {{- else if .Type.Scalar }}
       {{.Name}}: data['{{.Name|title}}'],

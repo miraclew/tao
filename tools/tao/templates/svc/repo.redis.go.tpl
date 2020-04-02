@@ -1,4 +1,4 @@
-{{- /*gotype: github.com/miraclew/tao/tools/tao/mapper/api/svc.Repo*/ -}}
+{{- /*gotype: e.coding.net/miraclew/tao/tools/tao/mapper/golang.ProtoGolang*/ -}}
 package {{.Pkg}}svc
 
 import (
@@ -11,11 +11,11 @@ type RedisRepo struct {
 	client *redis.Client
 }
 
-func (r *RedisRepo) Query(ctx context.Context, q *QueryParams) ([]{{.Pkg}}.{{.Resource|title}}, error) {
+func (r *RedisRepo) Query(ctx context.Context, q *QueryParams) ([]{{.Pkg}}.{{.Name|title}}, error) {
 	return nil, nil
 }
 
-func (r *RedisRepo) Get(ctx context.Context, id string) (*{{.Pkg}}.{{.Resource|title}}, error) {
+func (r *RedisRepo) Get(ctx context.Context, id string) (*{{.Pkg}}.{{.Name|title}}, error) {
 	return nil, nil
 }
 
@@ -23,7 +23,7 @@ func (r *RedisRepo) Update(ctx context.Context, attrs map[string]interface{}, id
 	return nil
 }
 
-func (r *RedisRepo) Create(ctx context.Context, req *{{.Pkg}}.{{.Resource|title}}) (string, error) {
+func (r *RedisRepo) Create(ctx context.Context, req *{{.Pkg}}.{{.Name|title}}) (string, error) {
 	return "", nil
 }
 

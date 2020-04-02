@@ -1,6 +1,8 @@
 package golang
 
-import "strings"
+import (
+	"strings"
+)
 
 type ProtoGolang struct {
 	Name     string // api name, cap camel
@@ -12,8 +14,24 @@ type ProtoGolang struct {
 	Event    *Service
 }
 
-func (p ProtoGolang) Pkg() string {
+func (p *ProtoGolang) Pkg() string {
 	return strings.ToLower(p.Name)
+}
+
+// The first model
+func (p *ProtoGolang) PrimaryModel() *Message {
+	return p.ModelMessages()[0]
+}
+
+func (p *ProtoGolang) ModelMessages() []*Message {
+	var ms []*Message
+	for _, e := range p.Messages {
+		if !e.Model {
+			continue
+		}
+		ms = append(ms, e)
+	}
+	return ms
 }
 
 type Service struct {
@@ -35,13 +53,33 @@ type Enum struct {
 
 type Value struct {
 	Name  string
+	Text  string // text of the value, use name if empty
 	Value int
+}
+
+func (v Value) String() string {
+	if v.Text != "" {
+		return v.Text
+	}
+	return v.Name
 }
 
 type Message struct {
 	Name   string
 	Fields []Field
 	Model  bool
+}
+
+func (m Message) InsertFields() []string {
+	var fs []string
+	for _, field := range m.Fields {
+		if field.Name == "Id" || field.Name == "CreatedAt" || field.Name == "UpdatedAt" {
+			continue
+		}
+
+		fs = append(fs, field.Name)
+	}
+	return fs
 }
 
 type Field struct {

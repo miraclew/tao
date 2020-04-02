@@ -1,13 +1,17 @@
 package parser
 
 import (
+	"github.com/miraclew/tao/tools/tao/parser/proto3"
+	"errors"
 	"fmt"
+	"github.com/alecthomas/participle"
 	"os"
 	"strings"
+)
 
-	"github.com/alecthomas/participle"
-	"github.com/miraclew/tao/tools/tao/generator"
-	"github.com/miraclew/tao/tools/tao/parser/proto3"
+var (
+	ErrModelNotFound   = errors.New("model not found")
+	ErrServiceNotFound = errors.New("service not found")
 )
 
 func ParseProto3(file string) (*Result, error) {
@@ -30,7 +34,7 @@ func ParseProto3(file string) (*Result, error) {
 	}
 
 	resourceMessage, err := ResourceMessage(proto)
-	if err != nil && err != generator.ErrModelNotFound {
+	if err != nil && err != ErrModelNotFound {
 		return nil, err
 	}
 	apiService, err := Service(proto, "Service")
@@ -38,7 +42,7 @@ func ParseProto3(file string) (*Result, error) {
 		return nil, err
 	}
 	eventService, err := Service(proto, "Event")
-	if err != nil && err != generator.ErrServiceNotFound {
+	if err != nil && err != ErrServiceNotFound {
 		return nil, err
 	}
 
@@ -92,7 +96,7 @@ func ResourceMessage(proto *proto3.Proto) (*proto3.Message, error) {
 			}
 		}
 	}
-	return nil, generator.ErrModelNotFound
+	return nil, ErrModelNotFound
 }
 
 func QueryMessages(proto *proto3.Proto, keys []string) []*proto3.Message {
@@ -130,7 +134,7 @@ func Service(proto *proto3.Proto, name string) (*proto3.Service, error) {
 			}
 		}
 	}
-	return nil, generator.ErrServiceNotFound
+	return nil, ErrServiceNotFound
 }
 
 func ResourceFields(message *proto3.Message, quoted bool) []string {

@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+import "google/protobuf/descriptor.proto";
+import "google/protobuf/empty.proto";
+
+extend google.protobuf.FileOptions {
+    string app = 50001;
+    string resource = 50002;
+}
+
+extend google.protobuf.ServiceOptions {
+    bool internal = 50010; // internal only service
+}
+
+extend google.protobuf.MessageOptions {
+    bool model = 50020;
+}
+
+extend google.protobuf.FieldOptions {
+    bool is_time = 50030;
+    string db_type = 50031;
+}
+
+extend google.protobuf.EnumValueOptions {
+    string text = 50041;
+}
+
+message Time {}
+message Any {}
+message Empty {}
+
+// DB KEY
+message Key {}
+
+
+message Response {
+    bool Success = 1;
+    string Message = 2;
+    int32 Code = 3;
+}
+
+message GetByIdRequest {
+    int64 Id = 1;
+}

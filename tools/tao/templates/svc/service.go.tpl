@@ -1,30 +1,21 @@
-{{- /*gotype: github.com/miraclew/tao/tools/tao/mapper/golang.ProtoGolang*/ -}}
+{{- /*gotype: e.coding.net/miraclew/tao/tools/tao/mapper/golang.ProtoGolang*/ -}}
 package {{.Pkg}}svc
 
 import (
 	"context"
-	"database/sql"
 	"{{.Module}}/locator"
 	"{{.Module}}/{{.Pkg}}"
-	"github.com/miraclew/tao/pkg/ac"
-	"github.com/miraclew/tao/pkg/ce"
-	_ "github.com/go-sql-driver/mysql"
-	"github.com/jmoiron/sqlx"
 	"github.com/labstack/echo/v4"
 )
 
 type DefaultService struct {
-	repo Repo
 }
 
 func NewService() *DefaultService {
-	conf := locator.Config()
-	db, err := sqlx.Connect("mysql", conf.MysqlAddr)
-	if err != nil {
-		panic(err)
-	}
+	{{- /*conf := locator.Config()*/ -}}
+	{{- /*db, err := sqlx.Connect("mysql", conf.MysqlAddr)*/ -}}
 
-	s := &DefaultService{repo: &MysqlRepo{DB: db}}
+	s := &DefaultService{}
 	locator.Register(s.Name()+"Service", s)
 	locator.Register(s.Name()+"Event", &{{.Pkg}}.EventSubscriber{Subscriber: locator.Subscriber()})
 

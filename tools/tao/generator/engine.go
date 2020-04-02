@@ -1,40 +1,37 @@
-package engine
+package generator
 
 import (
 	"bytes"
-
-	"github.com/miraclew/tao/tools/tao/generator"
 	"github.com/miraclew/tao/tools/tao/mapper"
-
 	"github.com/miraclew/tao/tools/tao/mapper/dart"
-
+	"github.com/miraclew/tao/tools/tao/mapper/golang"
+	"github.com/miraclew/tao/tools/tao/mapper/openapiv3"
+	"github.com/miraclew/tao/tools/tao/mapper/sqlschema"
+	"github.com/miraclew/tao/tools/tao/parser"
+	"github.com/miraclew/tao/tools/tao/parser/proto3"
 	"errors"
 	"fmt"
+	"github.com/Masterminds/sprig"
+	"github.com/alecthomas/participle"
+	"github.com/iancoleman/strcase"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"text/template"
-
-	"github.com/Masterminds/sprig"
-	"github.com/alecthomas/participle"
-	"github.com/miraclew/tao/tools/tao/mapper/golang"
-	"github.com/miraclew/tao/tools/tao/mapper/openapiv3"
-	"github.com/miraclew/tao/tools/tao/parser"
-	"github.com/miraclew/tao/tools/tao/parser/proto3"
 )
 
 type Engine struct {
-	Workspace *generator.Workspace
+	Workspace *Workspace
 	Config    *Config
 }
 
 func NewEngine() (*Engine, error) {
-	workspace, err := generator.NewWorkspace()
+	workspace, err := DetectWorkspace(".")
 	if err != nil {
 		return nil, err
 	}
 
-	config, err := NewConfig()
+	config, err := NewConfig(workspace.HomeDir)
 	if err != nil {
 		return nil, err
 	}
@@ -42,6 +39,7 @@ func NewEngine() (*Engine, error) {
 }
 
 func (e Engine) GenerateLocator() error {
+	// create locator.go
 	dir := filepath.Join(e.Workspace.HomeDir, "locator")
 	_ = os.Mkdir(dir, 0755)
 	fileName := filepath.Join(dir, "locator.go")
@@ -57,10 +55,35 @@ func (e Engine) GenerateLocator() error {
 			return err
 		}
 		rs = append(rs, mapper.Resource{
-			Name:     r,
+			Module:   e.Workspace.Module,
+			Pkg:      r,
+			Name:     proto.ResourceName,
 			HasEvent: proto.EventService != nil,
 		})
 	}
+
+	// fetch dependencies
+	if e.Config != nil {
+		for _, dir := range e.Config.Dependencies {
+			w, err := DetectWorkspace(dir)
+			if err != nil {
+				return err
+			}
+			for _, r := range w.ResourceDirs {
+				proto, err := parser.ParseProto3(filepath.Join(w.HomeDir, r, r+".proto"))
+				if err != nil {
+					return err
+				}
+				rs = append(rs, mapper.Resource{
+					Module:   w.Module,
+					Pkg:      r,
+					Name:     proto.ResourceName,
+					HasEvent: proto.EventService != nil,
+				})
+			}
+		}
+	}
+
 	model := mapper.Locator{
 		Module:    e.Workspace.Module,
 		Resources: rs,
@@ -76,44 +99,51 @@ func (e Engine) GenerateLocator() error {
 
 func (e Engine) GenerateSql() error {
 	for _, r := range e.Workspace.ResourceDirs {
-		_ = r
-		//proto, err := parser.ParseProto3(filepath.Join(e.Workspace.HomeDir, r, r+".proto"))
-		//if err != nil {
-		//	return err
-		//}
-		//schemaModel, err := sqlschema.MapMessage2CreateTable(proto.ResourceMessage)
-		//if err != nil {
-		//	return err
-		//}
-		//
-		//enums := gocode.ProtoEnums(proto.Proto)
-		//// fix enum
-		//for _, field := range schemaModel.Fields {
-		//	for _, enum := range enums {
-		//		if enum.Name == field.Type {
-		//			field.Type = "int(11)"
-		//		}
-		//	}
-		//}
-		//
-		//sqlDir := filepath.Join(e.Workspace.HomeDir, "doc/sql")
-		//_ = os.Mkdir(sqlDir, 0755)
-		//fileName := filepath.Join(sqlDir, r+".sql")
-		//
-		//outputFile, err := os.Create(fileName)
-		//if err != nil {
-		//	return err
-		//}
-		//tplFile := filepath.Join(e.Workspace.TemplateDir, "doc/sql_schema/mysql.sql.tpl")
-		//
-		//tpl, err := template.New(filepath.Base(tplFile)).Funcs(sprig.TxtFuncMap()).ParseFiles(tplFile)
-		//if err != nil {
-		//	return err
-		//}
-		//err = tpl.Execute(outputFile, schemaModel)
-		//if err != nil {
-		//	return err
-		//}
+		proto, err := parser.ParseProto3(filepath.Join(e.Workspace.HomeDir, r, r+".proto"))
+		if err != nil {
+			return err
+		}
+
+		models := getModelMessages(proto.Proto)
+		schemaModel, err := sqlschema.MapCreateTables(models)
+		if err != nil {
+			return err
+		}
+
+		protoGolang, err := golang.Map(proto.Proto)
+		if err != nil {
+			return err
+		}
+
+		// fix enum
+		for _, model := range schemaModel.Items {
+			for _, field := range model.Columns {
+				for _, enum := range protoGolang.Enums {
+					if enum.Name == field.Type {
+						field.Type = "int(11)"
+					}
+				}
+			}
+		}
+
+		sqlDir := filepath.Join(e.Workspace.HomeDir, "doc/sql")
+		_ = os.Mkdir(sqlDir, 0755)
+		fileName := filepath.Join(sqlDir, r+".sql")
+
+		outputFile, err := os.Create(fileName)
+		if err != nil {
+			return err
+		}
+		tplFile := filepath.Join(e.Workspace.TemplateDir, "doc/sql_schema/mysql.sql.tpl")
+
+		tpl, err := template.New(filepath.Base(tplFile)).Funcs(sprig.TxtFuncMap()).ParseFiles(tplFile)
+		if err != nil {
+			return err
+		}
+		err = tpl.Execute(outputFile, schemaModel)
+		if err != nil {
+			return err
+		}
 	}
 	return nil
 }
@@ -211,28 +241,24 @@ func (e Engine) GenerateOpenAPIV3() error {
 
 func (e Engine) GenerateProto() error {
 	// e.Workspace.CurrentResource not available
-	//dir, _ := os.Getwd()
-	//pkg := filepath.Base(dir)
+	dir, _ := os.Getwd()
+	pkg := filepath.Base(dir)
 
-	//model := api.Proto{
-	//	Pkg:      pkg,
-	//	Resource: strings.Title(pkg),
-	//}
-	//
-	//tplFile := filepath.Join(e.Workspace.TemplateDir, "api/resource.proto.tpl")
-	//fileName := fmt.Sprintf("%s.proto", strcase.ToSnake(pkg))
-	//f, err := os.Create(fileName)
-	//if err != nil {
-	//	return err
-	//}
-	//
-	//tpl, err := template.New(filepath.Base(tplFile)).Funcs(sprig.TxtFuncMap()).ParseFiles(tplFile)
-	//if err != nil {
-	//	return err
-	//}
-	//
-	//return tpl.Execute(f, model)
-	return nil
+	tplFile := filepath.Join(e.Workspace.TemplateDir, "api/resource.proto.tpl")
+	fileName := fmt.Sprintf("%s.proto", strcase.ToSnake(pkg))
+	f, err := os.Create(fileName)
+	if err != nil {
+		return err
+	}
+
+	tpl, err := template.New(filepath.Base(tplFile)).Funcs(sprig.TxtFuncMap()).ParseFiles(tplFile)
+	if err != nil {
+		return err
+	}
+
+	return tpl.Execute(f, map[string]interface{}{
+		"Resource": strcase.ToCamel(pkg),
+	})
 }
 
 func (e Engine) GenerateAPI() error {
@@ -240,25 +266,21 @@ func (e Engine) GenerateAPI() error {
 		return errors.New("this command should be execute in resource dir")
 	}
 
-	var p = participle.MustBuild(&proto3.Proto{}, participle.UseLookahead(2))
-	proto := &proto3.Proto{}
-	r, err := os.Open(e.Workspace.CurrentResource + ".proto")
-	if err != nil {
-		return err
-	}
-	defer r.Close()
-	err = p.Parse(r, proto)
+	res, err := parser.ParseProto3(e.Workspace.CurrentResource + ".proto")
 	if err != nil {
 		return err
 	}
 
-	protoGolang, err := golang.Map(proto)
+	protoGolang, err := golang.Map(res.Proto)
 	if err != nil {
 		return err
 	}
 	protoGolang.Module = e.Workspace.Module
 
 	files := []string{"api", "client"}
+	if res.EventService != nil {
+		files = append(files, "event")
+	}
 	for _, file := range files {
 		outputFile, err := os.Create(fmt.Sprintf("%s.go", file))
 		if err != nil {
@@ -279,7 +301,7 @@ func (e Engine) GenerateAPI() error {
 	return nil
 }
 
-func (e Engine) GenerateService() error {
+func (e Engine) GenerateService(useDefault bool) error {
 	if e.Workspace.CurrentResource == "" {
 		return errors.New("this command should be execute in resource dir")
 	}
@@ -303,14 +325,18 @@ func (e Engine) GenerateService() error {
 	}
 	protoGolang.Module = e.Workspace.Module
 
-	files := []string{"service", "handler.api", "handler.event"}
-	for _, file := range files {
+	files := []string{"handler.api", "handler.event", "service"}
+	tplFiles := []string{"handler.api", "handler.event", "service"}
+	if useDefault {
+		tplFiles[2] = "service_default"
+	}
+	for i, file := range files {
 		outputFile, err := os.Create(fmt.Sprintf("svc/%s.go", file))
 		if err != nil {
 			return err
 		}
 
-		tplFile := filepath.Join(e.Workspace.TemplateDir, fmt.Sprintf("svc/%s.go.tpl", file))
+		tplFile := filepath.Join(e.Workspace.TemplateDir, fmt.Sprintf("svc/%s.go.tpl", tplFiles[i]))
 		tpl, err := template.New(filepath.Base(tplFile)).Funcs(sprig.TxtFuncMap()).ParseFiles(tplFile)
 		if err != nil {
 			return err
@@ -324,41 +350,41 @@ func (e Engine) GenerateService() error {
 	return nil
 }
 
+// TODO: proto support more than one model messages,  how to generate repo code then?
 func (e Engine) GenerateRepo() error {
 	if e.Workspace.CurrentResource == "" {
 		return errors.New("this command should be execute in resource dir")
 	}
 	_ = os.MkdirAll("svc", 0755)
 
-	//files := []string{"repo", "repo.mysql", "repo.redis"}
-	//for _, file := range files {
-	//	outputFile, err := os.Create(fmt.Sprintf("svc/%s.go", file))
-	//	if err != nil {
-	//		return err
-	//	}
-	//
-	//	proto, err := parser.ParseProto3(e.Workspace.CurrentResource + ".proto")
-	//	if err != nil {
-	//		return err
-	//	}
-	//	model := svc.Repo{
-	//		Pkg:      e.Workspace.CurrentResource,
-	//		Module:   e.Workspace.Module,
-	//		Resource: e.Workspace.CurrentResource,
-	//		Table:    strings.Title(e.Workspace.CurrentResource),
-	//		Fields:   parser.ResourceFields(proto.ResourceMessage, false),
-	//	}
-	//
-	//	tplFile := filepath.Join(e.Workspace.TemplateDir, fmt.Sprintf("api/svc/%s.go.tpl", file))
-	//	tpl, err := template.New(filepath.Base(tplFile)).Funcs(sprig.TxtFuncMap()).ParseFiles(tplFile)
-	//	if err != nil {
-	//		return err
-	//	}
-	//	err = tpl.Execute(outputFile, model)
-	//	if err != nil {
-	//		return err
-	//	}
-	//}
+	files := []string{"repo", "repo.mysql", "repo.redis"}
+	for _, file := range files {
+		outputFile, err := os.Create(fmt.Sprintf("svc/%s.go", file))
+		if err != nil {
+			return err
+		}
+
+		proto, err := parser.ParseProto3(e.Workspace.CurrentResource + ".proto")
+		if err != nil {
+			return err
+		}
+
+		model, err := golang.Map(proto.Proto)
+		if err != nil {
+			return err
+		}
+		model.Module = e.Workspace.Module
+
+		tplFile := filepath.Join(e.Workspace.TemplateDir, fmt.Sprintf("svc/%s.go.tpl", file))
+		tpl, err := template.New(filepath.Base(tplFile)).Funcs(sprig.TxtFuncMap()).ParseFiles(tplFile)
+		if err != nil {
+			return err
+		}
+		err = tpl.Execute(outputFile, model)
+		if err != nil {
+			return err
+		}
+	}
 
 	return nil
 }
@@ -400,4 +426,30 @@ func (e Engine) UpdateTemplates() error {
 
 	fmt.Printf("update template done. (%s)\n", s)
 	return nil
+}
+
+func getModelMessages(proto *proto3.Proto) []*proto3.Message {
+	var msgs []*proto3.Message
+	for _, e := range proto.Entries {
+		if e.Message == nil {
+			continue
+		}
+
+		var isModel bool
+		for _, e2 := range e.Message.Entries {
+			if e2.Option != nil {
+				if e2.Option.Name == "model" {
+					isModel = true
+					break
+				}
+			}
+		}
+		if !isModel {
+			continue
+		}
+
+		msgs = append(msgs, e.Message)
+	}
+
+	return msgs
 }

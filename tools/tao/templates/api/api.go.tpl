@@ -1,13 +1,18 @@
-{{- /*gotype: github.com/miraclew/tao/tools/tao/mapper/golang.ProtoGolang*/ -}}
+{{- /*gotype: e.coding.net/miraclew/tao/tools/tao/mapper/golang.ProtoGolang*/ -}}
 package {{.Pkg}}
 
 import (
 	"context"
-	_ "time"
+	"e.coding.net/miraclew/tao/pkg/pb"
+	"time"
 )
 
+// Reserve import
+var _ = time.Time{}
+var _ = pb.Empty{}
+
 const ServiceName = "{{.Name}}"
-{{ range .Enums -}}
+{{- range .Enums }}
 type {{.Name}} int
 
 func (v {{.Name}}) String() string {
@@ -15,7 +20,7 @@ func (v {{.Name}}) String() string {
 	{{- $type := .Name }}
 	{{- range .Values}}
 	case {{$type}}{{.Name}}:
-		return "{{.Name}}"
+		return "{{.String}}"
 	{{- end}}
 	default:
 		return "Unknown"
@@ -25,7 +30,7 @@ func (v {{.Name}}) String() string {
 const (
 {{- $type := .Name }}
 {{- range .Values}}
-{{$type}}{{.Name}} {{$type}} = {{.Value}}
+	{{$type}}{{.Name}} {{$type}} = {{.Value}}
 {{- end}}
 )
 {{- end}}
@@ -36,15 +41,16 @@ type {{.Service.Name}} interface {
 {{- end}}
 }
 
-{{if .Event}}
+{{if .Event -}}
 type {{.Event.Name}} interface {
 {{- range .Event.Methods}}
-	{{.Name}}(f func(ctx context.Context, req *{{.Request}}) error)
+	Handle{{.Name}}(f func(ctx context.Context, req *{{.Request}}) error)
 {{- end}}
 }
+
 {{end}}
 
-{{ range .Messages -}}
+{{- range .Messages}}
 {{- $m := . -}}
 type {{.Name}} struct {
 {{- range .Fields}}
@@ -56,5 +62,6 @@ type {{.Name}} struct {
 func (req *{{.Name}}) Validate() error {
 	return nil
 }
+
+{{end}}
 {{- end}}
-{{end -}}

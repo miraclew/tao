@@ -1,17 +1,16 @@
 package ac
 
 import (
+	"github.com/miraclew/tao/pkg/auth"
+	"github.com/labstack/echo/v4"
 	"net/http"
 	"os"
 	"strconv"
 	"strings"
 	"time"
-
-	"github.com/labstack/echo/v4"
-	"github.com/miraclew/tao/pkg/auth"
 )
 
-func NewMiddleware(authority auth.Authority, skipPaths []string) echo.MiddlewareFunc {
+func NewMiddleware(authority auth.Verifier, skipPaths []string) echo.MiddlewareFunc {
 	isLocal := false
 	if os.Getenv("ENV") == "local" {
 		isLocal = true
@@ -42,7 +41,7 @@ func NewMiddleware(authority auth.Authority, skipPaths []string) echo.Middleware
 				return next(c)
 			}
 
-			identity, expireAt, err := authority.VerifyToken(authorization)
+			identity, expireAt, err := authority.Verify(authorization)
 			if err != nil {
 				return c.JSON(http.StatusUnauthorized, echo.Map{"message": "authorization invalid"})
 			}

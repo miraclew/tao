@@ -1,12 +1,12 @@
-{{- /*gotype: github.com/miraclew/tao/tools/tao/mapper.Locator*/ -}}
+{{- /*gotype: e.coding.net/miraclew/tao/tools/tao/mapper.Locator*/ -}}
 package locator
 
 import (
 	"{{.Module}}/config"
 	{{- range .Resources}}
-	"{{$.Module}}/{{.Name}}"
+	"{{.Module}}/{{.Pkg}}"
 	{{- end}}
-	"github.com/miraclew/tao/pkg/broker"
+	"e.coding.net/miraclew/tao/pkg/broker"
 	"fmt"
 )
 
@@ -37,21 +37,21 @@ func Config() *config.Config {
 }
 
 {{range .Resources}}
-func {{.Name|title}}() {{.Name}}.Service {
-	v, ok := registry["{{.Name|title}}Service"]
+func {{.Name}}() {{.Pkg}}.Service {
+	v, ok := registry["{{.Name}}Service"]
 	if !ok {
-		panic("{{.Name|title}}Service not register")
+		panic("{{.Name}}Service not register")
 	}
-	return v.({{.Name}}.Service)
+	return v.({{.Pkg}}.Service)
 }
 
 {{if .HasEvent -}}
-func {{.Name|title}}Event() {{.Name}}.Event {
-	v, ok := registry["{{.Name|title}}Event"]
+func {{.Name}}Event() {{.Pkg}}.Event {
+	v, ok := registry["{{.Name}}Event"]
 	if !ok {
-		panic("{{.Name|title}}Event not register")
+		panic("{{.Name}}Event not register")
 	}
-	return v.({{.Name}}.Event)
+	return v.({{.Pkg}}.Event)
 }
 {{end -}}
 {{end}}

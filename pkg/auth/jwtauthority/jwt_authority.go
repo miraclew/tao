@@ -1,11 +1,10 @@
 package jwtauthority
 
 import (
+	"github.com/miraclew/tao/pkg/auth"
 	"errors"
 	"fmt"
 	"time"
-
-	"github.com/miraclew/tao/pkg/auth"
 
 	jwt "github.com/dgrijalva/jwt-go"
 )
@@ -22,7 +21,7 @@ type authority struct {
 	expireIn  int64
 }
 
-func (a *authority) NewToken(identity auth.Identity, duration time.Duration) (string, int64, error) {
+func (a *authority) Issue(identity *auth.Identity, duration time.Duration) (string, int64, error) {
 	if duration == 0 {
 		duration = time.Duration(a.expireIn) * time.Second
 	}
@@ -31,6 +30,7 @@ func (a *authority) NewToken(identity auth.Identity, duration time.Duration) (st
 		DeviceID: identity.DeviceID,
 		UserID:   identity.UserID,
 		Roles:    identity.Roles,
+		Internal: identity.Internal,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: expiresAt,
 		},
@@ -45,7 +45,7 @@ func (a *authority) NewToken(identity auth.Identity, duration time.Duration) (st
 	return tokenString, expiresAt, nil
 }
 
-func (a *authority) VerifyToken(tokenStr string) (identity *auth.Identity, expireAt int64, err error) {
+func (a *authority) Verify(tokenStr string) (identity *auth.Identity, expireAt int64, err error) {
 	var token *jwt.Token
 	token, err = jwt.Parse(tokenStr, func(t *jwt.Token) (interface{}, error) {
 		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
@@ -75,13 +75,22 @@ func (a *authority) VerifyToken(tokenStr string) (identity *auth.Identity, expir
 
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		identity = &auth.Identity{}
-		identity.DeviceID, ok = claims["device_id"].(string)
+		if claims["device_id"] != nil {
+			identity.DeviceID = claims["device_id"].(string)
+		}
+
 		var uid float64
 		uid, ok = claims["user_id"].(float64)
-		if !ok {
-			err = errors.New("user_id not valid")
-			return
+
+		if claims["internal"] != nil {
+			identity.Internal = claims["internal"].(string)
+		} else {
+			if !ok {
+				err = errors.New("user_id not valid")
+				return
+			}
 		}
+
 		identity.UserID = int64(uid)
 		var _roles []interface{}
 		_roles, ok = claims["roles"].([]interface{})
@@ -111,5 +120,6 @@ type myClaims struct {
 	UserID   int64    `json:"user_id,omitempty"`
 	Roles    []string `json:"roles,omitempty"`
 	DeviceID string   `json:"device_id,omitempty"`
+	Internal string   `json:"internal,omitempty"`
 	jwt.StandardClaims
 }

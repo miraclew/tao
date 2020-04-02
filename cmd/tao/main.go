@@ -1,17 +1,16 @@
 package main
 
 import (
+	"github.com/miraclew/tao/tools/tao/generator"
 	"fmt"
 	"log"
 	"os"
-
-	"github.com/miraclew/tao/tools/tao/engine"
 
 	"github.com/urfave/cli/v2"
 )
 
 func main() {
-	e, err := engine.NewEngine()
+	e, err := generator.NewEngine()
 	if err != nil {
 		fmt.Printf("create engine error: %s\n", err)
 		return
@@ -75,9 +74,15 @@ func main() {
 			Aliases: []string{"s"},
 			Usage:   "创建service文件",
 			Action: func(context *cli.Context) error {
-				return e.GenerateService()
+				return e.GenerateService(context.Bool("default"))
 			},
-			SkipFlagParsing: true,
+			Flags: []cli.Flag{
+				&cli.BoolFlag{
+					Name:    "default",
+					Aliases: []string{"d"},
+					Usage:   "使用默认实现模板",
+				},
+			},
 		},
 		{
 			Name:    "repo",

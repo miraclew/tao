@@ -1,11 +1,10 @@
 package openapiv3
 
 import (
-	"fmt"
-	"strings"
-
 	"github.com/miraclew/tao/tools/tao/parser"
 	"github.com/miraclew/tao/tools/tao/parser/proto3"
+	"fmt"
+	"strings"
 )
 
 func MapProto2Doc(proto *parser.Result) (*OpenAPIV3, error) {

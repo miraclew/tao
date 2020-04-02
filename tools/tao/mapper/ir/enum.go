@@ -17,8 +17,18 @@ func (e2 enumMapper) Map(e *proto3.Enum) (*Enum, error) {
 	for _, value := range e.Values {
 		enum.Values = append(enum.Values, Value{
 			Name:  value.Value.Key,
+			Text:  EnumEntryTextOption(value.Value),
 			Value: value.Value.Value,
 		})
 	}
 	return &enum, nil
+}
+
+func EnumEntryTextOption(v *proto3.EnumValue) string {
+	for _, option := range v.Options {
+		if option.Name == "text" {
+			return *option.Value.String
+		}
+	}
+	return ""
 }

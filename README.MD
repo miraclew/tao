@@ -7,14 +7,14 @@ The Tao approach includes
 
  * A command tool ```tao```
  * A simple ioc container for service locate
- * Several support packages ```github.com/miraclew/tao/pkg```
+ * Several support packages ```e.coding.net/miraclew/tao/pkg```
 
 This project is inspired by a [Youtube presentation](https://www.youtube.com/watch?v=j6ow-UemzBc)
  
 ### The ```tao``` command
 ```tao``` command is the core tool to generate code/documents/sql etc.
 
-Execute ```go get -u github.com/miraclew/tao/cmd/tao``` to install ```tao``` command
+Execute ```go get -u e.coding.net/miraclew/tao/cmd/tao``` to install ```tao``` command
 
 sub-commands
 
@@ -166,7 +166,7 @@ tao api
 
 ## Demo project
 
-[Demo Project](https://github.com/miraclew/tao-demo)
+[Demo Project](https://e.coding.net/miraclew/tao-demo)
  
 ## Services intercommunication
 

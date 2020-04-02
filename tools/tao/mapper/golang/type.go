@@ -1,9 +1,8 @@
 package golang
 
 import (
-	"fmt"
-
 	"github.com/miraclew/tao/tools/tao/parser/proto3"
+	"fmt"
 )
 
 type TypeMapper int
@@ -17,6 +16,12 @@ func (m TypeMapper) Map(t *proto3.Type) (string, error) {
 		}
 		if t.Reference == "Any" {
 			return "interface{}", nil
+		}
+		if t.Reference == "Empty" {
+			return "pb.Empty", nil
+		}
+		if t.Reference == "Response" {
+			return "pb.Response", nil
 		}
 		return t.Reference, nil
 	} else if t.Map != nil {

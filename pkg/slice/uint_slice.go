@@ -3,6 +3,9 @@ package slice
 type UintSlice []uint
 
 func (s UintSlice) Has(item uint) bool {
+	if s == nil {
+		return false
+	}
 	for _, v := range s {
 		if v == item {
 			return true

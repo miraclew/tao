@@ -2,11 +2,9 @@ package ac
 
 import (
 	"context"
-
-	"github.com/miraclew/tao/pkg/slice"
-
-	"github.com/labstack/echo/v4"
 	"github.com/miraclew/tao/pkg/auth"
+	"github.com/miraclew/tao/pkg/slice"
+	"github.com/labstack/echo/v4"
 )
 
 const (
@@ -29,6 +27,11 @@ type aContext struct {
 	internalSource string
 }
 
+type xContext struct {
+	UserId string
+	Source string
+}
+
 func (a *aContext) Internal() string {
 	return a.internalSource
 }
@@ -46,10 +49,12 @@ func (a *aContext) Identity() *auth.Identity {
 }
 
 func (a *aContext) Privilege() bool {
-	if a.identity != nil && slice.StringsContains(a.identity.Roles, "admin") {
-		return true
+	if a.identity != nil {
+		if slice.StringsContains(a.identity.Roles, "admin") || a.identity.Internal != "" {
+			return true
+		}
 	}
-	return a.internalSource != ""
+	return a.internalSource != "" // in process call
 }
 
 func FromEcho(ctx echo.Context) context.Context {
@@ -67,6 +72,24 @@ func FromContext(ctx context.Context) Context {
 	if ok {
 		return c
 	}
+
+	if ctx.Value("Client") != nil {
+		internal := ctx.Value("Client").(string)
+		var v *auth.Identity
+		if ctx.Value(UserIdContextKey) != nil {
+			v = ctx.Value(UserIdContextKey).(*auth.Identity)
+		} else {
+			v = &auth.Identity{
+				Internal: internal,
+			}
+		}
+
+		return &aContext{
+			Context:  ctx,
+			identity: v,
+		}
+	}
+
 	v := ctx.Value(UserIdContextKey).(*auth.Identity)
 	return &aContext{
 		Context:  ctx,

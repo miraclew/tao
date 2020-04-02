@@ -11,6 +11,9 @@ func (s Int64Slice) InterfaceSlice() []interface{} {
 }
 
 func (s Int64Slice) Has(item int64) bool {
+	if s == nil {
+		return false
+	}
 	for _, v := range s {
 		if v == item {
 			return true

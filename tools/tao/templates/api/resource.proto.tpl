@@ -1,38 +1,27 @@
-{{- /*gotype: github.com/miraclew/tao/tools/tao/mapper/api.Proto*/ -}}
 syntax = "proto3";
 
-import "google/protobuf/descriptor.proto";
-import "google/protobuf/empty.proto";
-
-extend google.protobuf.FileOptions {
-    string resource = 50002;
-}
-
-extend google.protobuf.FieldOptions {
-    bool is_time = 50020;
-}
+import "tao.proto";
 
 package {{.Resource}}.v1;
 
+option (app) = "TODO";
 option (resource) = "{{.Resource}}";
-
-message Time {}
-message Any {}
-message Empty {}
 
 // Resource
 message {{.Resource}} {
+    option (model) = true;
     int64 Id = 1;
-    int32 Type = 2;
-    int32 ObjectType = 3;
-    string ObjectId = 4;
-    int64 UserId = 5;
-    string Content = 6;
-    int32 State = 7;
-    Time CreatedAt = 8;
+    string Title = 2;
+    string Content = 3;
+    int64 UserId = 4;
+
+    Time CreatedAt = 10;
+
+    Key PK_Id = 100;
+    Key K_UserId = 101;
 }
 
-// Service
+// Service (APIs in the service)
 service Service {
     rpc Create(CreateRequest) returns (CreateResponse);
     rpc Delete(DeleteRequest) returns (DeleteResponse);
@@ -54,7 +43,7 @@ message DeleteRequest {
 }
 
 message DeleteResponse {
-    string result = 1;
+    string Result = 1;
 }
 
 message UpdateRequest {
@@ -87,8 +76,9 @@ message QueryResponse {
     repeated {{.Resource}} Results = 1;
 }
 
-// Event
+// Event (subscribe events from this service)
 service Event {
+    option (internal) = true;
     rpc HandleCreated(CreatedEvent) returns (Empty);
     rpc HandleDeleted(DeletedEvent) returns (Empty);
     rpc HandleUpdated(UpdatedEvent) returns (Empty);

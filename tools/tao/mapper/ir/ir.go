@@ -5,7 +5,7 @@ import "fmt"
 // ProtoIR is proto intermediate representative
 type ProtoIR struct {
 	Name     string // api name, cap camel
-	URL      string
+	App      string
 	Enums    []*Enum
 	Service  *Service
 	Event    *Service
@@ -31,7 +31,15 @@ type Enum struct {
 
 type Value struct {
 	Name  string
+	Text  string // text of the value, use name if empty
 	Value int
+}
+
+func (v Value) String() string {
+	if v.Text != "" {
+		return v.Text
+	}
+	return v.Name
 }
 
 type Message struct {

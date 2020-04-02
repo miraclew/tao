@@ -1,9 +1,9 @@
-{{- /*gotype: github.com/miraclew/tao/tools/tao/mapper/golang.ProtoGolang*/ -}}
+{{- /*gotype: e.coding.net/miraclew/tao/tools/tao/mapper/golang.ProtoGolang*/ -}}
 package {{.Pkg}}svc
 
 import (
 	"context"
-	"github.com/miraclew/douyin/locator"
+	"{{.Module}}/locator"
 	"{{.Module}}/{{.Pkg}}"
 )
 

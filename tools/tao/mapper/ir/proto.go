@@ -1,9 +1,8 @@
 package ir
 
 import (
-	"fmt"
-
 	"github.com/miraclew/tao/tools/tao/parser/proto3"
+	"fmt"
 )
 
 func FileOption(proto *proto3.Proto, option string) (string, error) {

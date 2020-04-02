@@ -1,9 +1,8 @@
 package ir
 
 import (
-	"strings"
-
 	"github.com/miraclew/tao/tools/tao/parser/proto3"
+	"strings"
 )
 
 type serviceMapper struct {

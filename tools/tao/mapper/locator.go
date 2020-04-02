@@ -1,11 +1,13 @@
 package mapper
 
 type Locator struct {
-	Module    string
+	Module    string // module of the locator
 	Resources []Resource
 }
 
 type Resource struct {
-	Name     string
+	Module   string
+	Pkg      string // pkg name
+	Name     string // Title camel case, e.g. ContentReport
 	HasEvent bool
 }

@@ -3,6 +3,9 @@ package slice
 type StringSlice []string
 
 func (s StringSlice) Has(item string) bool {
+	if s == nil {
+		return false
+	}
 	for _, v := range s {
 		if v == item {
 			return true

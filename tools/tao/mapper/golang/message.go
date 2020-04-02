@@ -22,7 +22,7 @@ func (mm MessageMapper) Map(message *proto3.Message) (*Message, error) {
 			continue
 		}
 
-		if entry.Field == nil {
+		if entry.Field == nil || entry.Field.Type.Reference == "Key" {
 			continue
 		}
 

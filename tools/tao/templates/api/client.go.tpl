@@ -1,23 +1,36 @@
-{{- /*gotype: github.com/miraclew/tao/tools/tao/mapper/golang.ProtoGolang*/ -}}
+{{- /*gotype: e.coding.net/miraclew/tao/tools/tao/mapper/golang.ProtoGolang*/ -}}
 package {{.Pkg}}
 
 import (
     "bytes"
     "context"
+    "e.coding.net/miraclew/tao/pkg/ce"
+    "e.coding.net/miraclew/tao/pkg/pb"
+    "e.coding.net/miraclew/tao/pkg/ac"
+    "e.coding.net/miraclew/tao/pkg/auth"
     "encoding/json"
+    "github.com/pkg/errors"
+    "io/ioutil"
     "net/http"
+    "time"
 )
 
-const URL = "{{.URL}}"
+var _ = pb.Empty{}
 
 type Client struct {
-    t *http.Client
+    http.Client
+    BaseUrl string
+    Issuer auth.Issuer
 }
 
-{{range .Service.Methods}}
+func (c *Client) Name() string {
+    return "{{.Name}}Service"
+}
+
+{{range .Service.Methods -}}
 func (c *Client) {{.Name}}(ctx context.Context, req *{{.Request}}) (*{{.Response}}, error) {
     res := new({{.Response }})
-    err := c.do(ctx, "{{.Name | lower}}", req, res)
+    err := c.do(ctx, "/v1/{{$.Name|lower}}/{{.Name | lower}}", req, res)
     if err != nil {
         return nil, err
     }
@@ -26,16 +39,41 @@ func (c *Client) {{.Name}}(ctx context.Context, req *{{.Request}}) (*{{.Response
 {{end}}
 
 func (c *Client) do(ctx context.Context, path string, req interface{}, res interface{}) error {
+    ctx2 := ac.FromContext(ctx)
+
+    token, _, err := c.Issuer.Issue(ctx2.Identity(), time.Minute*10)
+    if err != nil {
+        return errors.Wrap(err, "client: issue token error")
+    }
+
     buf := new(bytes.Buffer)
-    err := json.NewEncoder(buf).Encode(req)
+    err = json.NewEncoder(buf).Encode(req)
     if err != nil {
         return err
     }
-    resp, err := c.t.Post(URL+"/"+path, "application/json", buf)
+
+    httpReq, err := http.NewRequest("POST", c.BaseUrl + path, buf)
+    if err != nil {
+        return err
+    }
+    httpReq.Header.Set("Content-Type", "application/json")
+    httpReq.Header.Set("Authorization", token)
+    httpReq.Header.Set("Client", ctx2.Internal())
+    resp, err := c.Do(httpReq)
+
     if err != nil {
         return err
     }
     defer resp.Body.Close()
+
+    if resp.StatusCode >= 300 {
+        s, _ := ioutil.ReadAll(resp.Body)
+        return &ce.Error{
+            Code:    resp.StatusCode,
+            Message: string(s),
+        }
+    }
+
     err = json.NewDecoder(resp.Body).Decode(res)
     if err != nil {
         return err

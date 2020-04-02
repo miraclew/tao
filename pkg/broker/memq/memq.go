@@ -1,10 +1,10 @@
 package memq
 
 import (
+	"github.com/miraclew/tao/pkg/broker"
 	"encoding/json"
 	"fmt"
-
-	"github.com/miraclew/tao/pkg/broker"
+	"log"
 )
 
 type memQ struct {
@@ -31,6 +31,7 @@ func (m memQ) Publish(topic string, msg interface{}) error {
 
 	hs, ok := m.handlers[topic]
 	if !ok {
+		log.Printf("warning: topic [%s] not found", topic)
 		return nil
 	}
 	for _, h := range hs {

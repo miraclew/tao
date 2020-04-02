@@ -1,7 +1,13 @@
-{{- /*gotype: github.com/miraclew/tao/tools/tao/mapper/sqlschema.CreateTable*/ -}}
+{{- /*gotype: e.coding.net/miraclew/tao/tools/tao/mapper/sqlschema.CreateTables*/ -}}
+{{range .Items}}
 CREATE TABLE `{{.TableName}}` (
-  {{- range .Fields }}
-  `{{.Name}}` {{.Type}}{{if .Null}} null{{end}}{{if .Default}} default {{.Default}}{{end}}{{if eq $.Pk .Name}} AUTO_INCREMENT{{end}},
+  {{- range .Columns }}
+  `{{.Name}}` {{.Type}}{{if .Null}} null{{else}} not null{{end}}{{if .Default.Valid}} default {{.Default.String}}{{end}}{{if eq .Name "Id"}} AUTO_INCREMENT{{end}},
   {{- end }}
-  PRIMARY KEY (`{{.Pk}}`)
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+  {{- $n :=  len .Keys -}}
+  {{- range $i, $elem :=  .Keys}}
+  {{$elem.String}}{{if ne (add $i 1) $n}},{{end}}
+  {{- end}}
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=UTF8MB4;
+
+{{end -}}

@@ -1,4 +1,4 @@
-{{- /*gotype: github.com/miraclew/tao/tools/tao/mapper/api/svc.Repo*/ -}}
+{{- /*gotype: e.coding.net/miraclew/tao/tools/tao/mapper/golang.ProtoGolang*/ -}}
 package {{.Pkg}}svc
 
 import (
@@ -8,7 +8,6 @@ import (
 	"fmt"
 	"strconv"
 	"strings"
-	_ "time"
 )
 
 var (
@@ -16,10 +15,10 @@ var (
 )
 
 type Repo interface {
-	Query(ctx context.Context, q *QueryParams) ([]*{{.Pkg}}.{{.Resource|title}}, error)
-	Get(ctx context.Context, q *GetParams) (*{{.Pkg}}.{{.Resource|title}}, error)
+	Query(ctx context.Context, q *QueryParams) ([]*{{.Pkg}}.{{.Name|title}}, error)
+	Get(ctx context.Context, q *GetParams) (*{{.Pkg}}.{{.Name|title}}, error)
 	Update(ctx context.Context, v Values, id int64) error
-	Create(ctx context.Context, req *{{.Pkg}}.{{.Resource|title}}) (int64, error)
+	Create(ctx context.Context, req *{{.Pkg}}.{{.Name|title}}) (int64, error)
 	Delete(ctx context.Context, id int64) error
 }
 

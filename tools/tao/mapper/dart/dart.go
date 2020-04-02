@@ -1,11 +1,10 @@
 package dart
 
 import (
-	"strings"
-
 	"github.com/miraclew/tao/pkg/slice"
 	"github.com/miraclew/tao/tools/tao/mapper/ir"
 	"github.com/miraclew/tao/tools/tao/parser/proto3"
+	"strings"
 )
 
 type protoMapper struct {
@@ -50,7 +49,7 @@ func (p protoMapper) Map(proto *proto3.Proto) (*ir.ProtoIR, error) {
 	mm := ir.NewMessageMapper(fm)
 	sm := ir.NewServiceMapper(tm)
 
-	var ignoreMessages = slice.StringSlice{"Time", "Any", "Empty"}
+	var ignoreMessages = slice.StringSlice{"Time", "Any", "Empty", "Key"}
 	var messages []*ir.Message
 	for _, entry := range proto.Entries {
 		if entry.Message != nil {
@@ -89,8 +88,13 @@ func (p protoMapper) Map(proto *proto3.Proto) (*ir.ProtoIR, error) {
 	if err != nil {
 		return nil, err
 	}
+	app, err := ir.FileOption(proto, "app")
+	if err != nil {
+		return nil, err
+	}
 
 	protoIR := &ir.ProtoIR{
+		App:      app,
 		Name:     resource,
 		Enums:    enums,
 		Service:  service,

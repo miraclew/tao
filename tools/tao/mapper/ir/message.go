@@ -19,7 +19,7 @@ func (mm messageMapper) Map(message *proto3.Message) (*Message, error) {
 	}
 
 	for _, entry := range message.Entries {
-		if entry.Field == nil {
+		if entry.Field == nil || entry.Field.Type.Reference == "Key" {
 			continue
 		}
 		field, err := mm.FieldMapper.Map(entry.Field)
