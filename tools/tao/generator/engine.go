@@ -18,6 +18,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strings"
 	"text/template"
 )
 
@@ -173,9 +174,9 @@ func (e Engine) GenerateSwift() error {
 		if e.Config != nil && e.Config.SwiftOutputDir != "" {
 			fileName = filepath.Join(e.Config.SwiftOutputDir, r+".swift")
 		} else {
-			dartDir := filepath.Join(e.Workspace.HomeDir, "doc/swift")
-			_ = os.Mkdir(dartDir, 0755)
-			fileName = filepath.Join(dartDir, r+".swift")
+			swiftDir := filepath.Join(e.Workspace.HomeDir, "doc/swift")
+			_ = os.Mkdir(swiftDir, 0755)
+			fileName = filepath.Join(swiftDir, strings.Title(r)+".swift")
 		}
 
 		outputFile, err := os.Create(fileName)
