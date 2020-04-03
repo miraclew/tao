@@ -2,17 +2,19 @@
 
 import Foundation
 
-{{- range .Enums }}
-enum {{.Name}}: Int {
-{{range .Values}} case {{.Name}} = {{.Value}}, {{end }}
+{{ range .Enums }}
+enum {{.Name}}: Int, Codable {
+{{- range .Values}}
+  case {{.Name}} = {{.Value}}
+{{- end}}
 }
-{{- end }}
+{{end }}
 
 class {{.Name}}Service {
-  static const app = "{{.App}}";
+  var app = "{{.App}}"
 
 {{range .Service.Methods}}
-  func {{.Name}}({{.Request}} req, completion: @escaping ({{.Response}}) -> ()) {
+  func {{.Name}}(req: {{.Request}}, completion: @escaping ({{.Response}}) -> ()) {
     guard let url = URL(string: "/v1/{{$.Name|lower}}/{{.Name|lower}}") else {return}
     var request = URLRequest(url: url)
     request.httpMethod = "POST"
@@ -27,18 +29,16 @@ class {{.Name}}Service {
       let res = try! JSONDecoder().decode({{.Response}}.self, from: data!)
 
       DispatchQueue.main.async {
-        completion(posts)
+        completion(res)
       }
     }.resume()
   }
 {{end -}}
 }
 {{range .Messages}}
-struct {{.Name}}: Codable, Identifiable {
+struct {{.Name}}: Codable {
 {{- range .Fields}}
   var {{.Name}}: {{.Type.String}}
 {{- end}}
-
-  {{.Name}}({ {{range .Fields}}this.{{.Name}}, {{end}} });
 }
 {{end}}

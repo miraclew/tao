@@ -172,7 +172,7 @@ func (e Engine) GenerateSwift() error {
 
 		var fileName string
 		if e.Config != nil && e.Config.SwiftOutputDir != "" {
-			fileName = filepath.Join(e.Config.SwiftOutputDir, r+".swift")
+			fileName = filepath.Join(e.Config.SwiftOutputDir, strings.Title(r)+".swift")
 		} else {
 			swiftDir := filepath.Join(e.Workspace.HomeDir, "doc/swift")
 			_ = os.Mkdir(swiftDir, 0755)
