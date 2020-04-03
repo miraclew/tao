@@ -128,6 +128,14 @@ func main() {
 			},
 			SkipFlagParsing: true,
 		},
+		{
+			Name:  "swift",
+			Usage: "创建Swift客户端",
+			Action: func(context *cli.Context) error {
+				return e.GenerateSwift()
+			},
+			SkipFlagParsing: true,
+		},
 	}
 
 	err = app.Run(os.Args)

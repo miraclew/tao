@@ -7,6 +7,7 @@ import (
 	"github.com/miraclew/tao/tools/tao/mapper/golang"
 	"github.com/miraclew/tao/tools/tao/mapper/openapiv3"
 	"github.com/miraclew/tao/tools/tao/mapper/sqlschema"
+	"github.com/miraclew/tao/tools/tao/mapper/swift"
 	"github.com/miraclew/tao/tools/tao/parser"
 	"github.com/miraclew/tao/tools/tao/parser/proto3"
 	"errors"
@@ -148,6 +149,53 @@ func (e Engine) GenerateSql() error {
 	return nil
 }
 
+func (e Engine) GenerateSwift() error {
+	for _, r := range e.Workspace.ResourceDirs {
+		var p = participle.MustBuild(&proto3.Proto{}, participle.UseLookahead(2))
+		proto := &proto3.Proto{}
+		file, err := os.Open(filepath.Join(e.Workspace.HomeDir, r, r+".proto"))
+		if err != nil {
+			return err
+		}
+		defer file.Close()
+		err = p.Parse(file, proto)
+		if err != nil {
+			return err
+		}
+
+		pm := swift.NewProtoMapper()
+		model, err := pm.Map(proto)
+		if err != nil {
+			return err
+		}
+
+		var fileName string
+		if e.Config != nil && e.Config.SwiftOutputDir != "" {
+			fileName = filepath.Join(e.Config.SwiftOutputDir, r+".swift")
+		} else {
+			dartDir := filepath.Join(e.Workspace.HomeDir, "doc/swift")
+			_ = os.Mkdir(dartDir, 0755)
+			fileName = filepath.Join(dartDir, r+".swift")
+		}
+
+		outputFile, err := os.Create(fileName)
+		if err != nil {
+			return err
+		}
+		tplFile := filepath.Join(e.Workspace.TemplateDir, "sdk/swift/client.swift.tpl")
+
+		tpl, err := template.New(filepath.Base(tplFile)).Funcs(sprig.TxtFuncMap()).ParseFiles(tplFile)
+		if err != nil {
+			return err
+		}
+		err = tpl.Execute(outputFile, model)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func (e Engine) GenerateDart() error {
 	for _, r := range e.Workspace.ResourceDirs {
 		var p = participle.MustBuild(&proto3.Proto{}, participle.UseLookahead(2))
@@ -181,7 +229,7 @@ func (e Engine) GenerateDart() error {
 		if err != nil {
 			return err
 		}
-		tplFile := filepath.Join(e.Workspace.TemplateDir, "sdk/dart/client.dart.tpl")
+		tplFile := filepath.Join(e.Workspace.TemplateDir, "sdk/dart/client.swift.tpl")
 
 		tpl, err := template.New(filepath.Base(tplFile)).Funcs(sprig.TxtFuncMap()).ParseFiles(tplFile)
 		if err != nil {

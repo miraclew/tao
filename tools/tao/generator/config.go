@@ -7,6 +7,7 @@ import (
 )
 
 type Config struct {
+	SwiftOutputDir string
 	DartOutputDir string
 	Dependencies  []string
 }
