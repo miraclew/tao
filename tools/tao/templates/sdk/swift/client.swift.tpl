@@ -11,27 +11,14 @@ enum {{.Name}}: Int, Codable {
 {{end }}
 
 class {{.Name}}Service {
-  var app = "{{.App}}"
+  let app = "{{.App}}"
+  static let shared = {{.Name}}Service()
+
+  private init() {}
 
 {{range .Service.Methods}}
   func {{.Name}}(req: {{.Request}}, completion: @escaping ({{.Response}}) -> ()) {
-    guard let url = URL(string: "/v1/{{$.Name|lower}}/{{.Name|lower}}") else {return}
-    var request = URLRequest(url: url)
-    request.httpMethod = "POST"
-    request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-    request.setValue("at", forHTTPHeaderField: "Authorization")
-    guard let httpBody = try? JSONSerialization.data(withJSONObject: req, options: []) else {
-    return
-    }
-    request.httpBody = httpBody
-
-    URLSession.shared.dataTask(with: request) { (data, _, _) in
-      let res = try! JSONDecoder().decode({{.Response}}.self, from: data!)
-
-      DispatchQueue.main.async {
-        completion(res)
-      }
-    }.resume()
+    APIClient.shared.rpc(app: app, path: "/v1/{{$.Name|lower}}/{{.Name|lower}}", req: req, completion: completion)
   }
 {{end -}}
 }

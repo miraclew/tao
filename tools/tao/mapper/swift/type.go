@@ -20,8 +20,9 @@ func (m typeMapper) Map(t *proto3.Type) (string, error) {
 		return t.Reference, nil
 	} else if t.Map != nil {
 		k, _ := m.Map(t.Map.Key)
-		v, _ := m.Map(t.Map.Value)
-		return fmt.Sprintf("Dictionary<%s, %s>", k, v), nil
+		//v, _ := m.Map(t.Map.Value)
+		//return fmt.Sprintf("Dictionary<%s, %s>", k, v), nil
+		return fmt.Sprintf("[%s: %s]", k, "String"), nil
 	} else {
 		return "", nil
 	}
