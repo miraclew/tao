@@ -17,7 +17,7 @@ class {{.Name}}Service {
   private init() {}
 
 {{range .Service.Methods}}
-  func {{.Name}}(req: {{.Request}}, completion: @escaping ({{.Response}}) -> ()) {
+  func {{.Name}}(req: {{.Request}}, completion: @escaping ({{.Response}}?, Error?) -> ()) {
     APIClient.shared.rpc(app: app, path: "/v1/{{$.Name|lower}}/{{.Name|lower}}", req: req, completion: completion)
   }
 {{end -}}
