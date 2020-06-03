@@ -8,3 +8,9 @@ type Response struct {
 	Message string
 	Code    int32
 }
+
+type UserAvatar struct {
+	Id       int64
+	Nickname string
+	Avatar   string
+}
