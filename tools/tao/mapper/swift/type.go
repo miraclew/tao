@@ -1,8 +1,9 @@
 package swift
 
 import (
-	"github.com/miraclew/tao/tools/tao/parser/proto3"
 	"fmt"
+
+	"github.com/miraclew/tao/tools/tao/parser/proto3"
 )
 
 type typeMapper int
@@ -20,9 +21,11 @@ func (m typeMapper) Map(t *proto3.Type) (string, error) {
 		return t.Reference, nil
 	} else if t.Map != nil {
 		k, _ := m.Map(t.Map.Key)
-		//v, _ := m.Map(t.Map.Value)
-		//return fmt.Sprintf("Dictionary<%s, %s>", k, v), nil
-		return fmt.Sprintf("[%s: %s]", k, "String"), nil
+		v, _ := m.Map(t.Map.Value)
+		if v == "Any" {
+			v = "String" // hack, don't know how to generate Codable in swift, use String instead
+		}
+		return fmt.Sprintf("[%s: %s]", k, v), nil
 	} else {
 		return "", nil
 	}
