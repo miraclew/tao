@@ -16,7 +16,7 @@ type MysqlRepo struct {
 }
 
 func (r *MysqlRepo) Query(ctx context.Context, q *QueryParams) ([]*{{.Pkg}}.{{.Name|title}}, error) {
-	var vs []*{{.Pkg}}.{{.Name|title}}
+	vs := []*{{.Pkg}}.{{.Name|title}}{}
 	var err error
 	var values []interface{}
 	var selectStatement = "SELECT * FROM `{{.Name}}` "
