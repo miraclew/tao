@@ -2,9 +2,10 @@ package sqlschema
 
 import (
 	"database/sql"
-	"github.com/miraclew/tao/tools/tao/parser/proto3"
 	"fmt"
 	"strings"
+
+	"github.com/miraclew/tao/tools/tao/parser/proto3"
 )
 
 func MapCreateTables(messages []*proto3.Message) (*CreateTables, error) {
@@ -82,6 +83,9 @@ func MapColumn(field *proto3.Field) (*Column, error) {
 
 	if fType == "datetime" {
 		fDefault.String = "CURRENT_TIMESTAMP"
+		if field.Name == "UpdatedAt" {
+			fDefault.String = "CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP"
+		}
 	} else if strings.HasPrefix(fType, "int") || strings.HasPrefix(fType, "bigint") || strings.HasPrefix(fType, "tinyint") {
 		fDefault.String = "0"
 	} else if strings.HasPrefix(fType, "char") || strings.HasPrefix(fType, "varchar") {
