@@ -225,3 +225,13 @@ The sdk files can be used to interact with services.
  * Android Java/Kotlin client (TODO)
  * iOS Swift client (TODO) 
  * Support JAVA project
+
+
+## V2
+
+Not project structure, just .proto files and output files
+
+ * Remove project structure 
+ * Freely generate client code any where, not just in proejct directory
+ * More options when generate code, control which part of code is genrated. e.g. http api definition and client/ event definition and client/ external apps notification messages etc.
+ 
