@@ -1,6 +1,9 @@
 package golang
 
 import (
+	"fmt"
+
+	"github.com/iancoleman/strcase"
 	"github.com/miraclew/tao/tools/tao/parser/proto3"
 )
 
@@ -30,6 +33,12 @@ func (mm MessageMapper) Map(message *proto3.Message) (*Message, error) {
 		if err != nil {
 			return nil, err
 		}
+
+		tags := fmt.Sprintf(`json:"%s"`, strcase.ToSnake(field.Name))
+		if s.Model {
+			tags += fmt.Sprintf(` db:"%s"`, field.Name)
+		}
+		field.Tags = tags
 		s.Fields = append(s.Fields, *field)
 	}
 	return s, nil

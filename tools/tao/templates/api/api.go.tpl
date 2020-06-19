@@ -54,7 +54,7 @@ type {{.Event.Name}} interface {
 {{- $m := . -}}
 type {{.Name}} struct {
 {{- range .Fields}}
-	{{.Name}} {{.Type}}{{if $m.Model}} `db:"{{.Name}}"`{{end}}
+	{{.Name}} {{.Type}}{{if .Tags}} `{{.Tags}}`{{end}}
 {{- end}}
 }
 

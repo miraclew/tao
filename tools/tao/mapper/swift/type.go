@@ -10,7 +10,7 @@ type typeMapper int
 
 func (m typeMapper) Map(t *proto3.Type) (string, error) {
 	if t.Scalar != proto3.None {
-		return scalarToDartMap[t.Scalar.GoString()], nil
+		return scalarToSwiftMap[t.Scalar.GoString()], nil
 	} else if t.Reference != "" {
 		if t.Reference == "Time" {
 			return "Date", nil
@@ -31,7 +31,7 @@ func (m typeMapper) Map(t *proto3.Type) (string, error) {
 	}
 }
 
-var scalarToDartMap = map[string]string{
+var scalarToSwiftMap = map[string]string{
 	"Double":   "Double",
 	"Float":    "Double",
 	"Int32":    "Int",
