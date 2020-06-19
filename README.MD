@@ -104,7 +104,7 @@ message DeleteRequest {
 }
 
 message DeleteResponse {
-    string result = 1;
+    string Result = 1;
 }
 
 message UpdateRequest {
