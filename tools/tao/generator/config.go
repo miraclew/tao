@@ -8,8 +8,9 @@ import (
 
 type Config struct {
 	SwiftOutputDir string
-	DartOutputDir string
-	Dependencies  []string
+	DartOutputDir  string
+	UseSnackCase   bool
+	Dependencies   []string
 }
 
 func NewConfig(homeDir string) (*Config, error) {

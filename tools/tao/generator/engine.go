@@ -2,6 +2,17 @@ package generator
 
 import (
 	"bytes"
+	"errors"
+	"fmt"
+	"os"
+	"os/exec"
+	"path/filepath"
+	"strings"
+	"text/template"
+
+	"github.com/Masterminds/sprig"
+	"github.com/alecthomas/participle"
+	"github.com/iancoleman/strcase"
 	"github.com/miraclew/tao/tools/tao/mapper"
 	"github.com/miraclew/tao/tools/tao/mapper/dart"
 	"github.com/miraclew/tao/tools/tao/mapper/golang"
@@ -10,16 +21,6 @@ import (
 	"github.com/miraclew/tao/tools/tao/mapper/swift"
 	"github.com/miraclew/tao/tools/tao/parser"
 	"github.com/miraclew/tao/tools/tao/parser/proto3"
-	"errors"
-	"fmt"
-	"github.com/Masterminds/sprig"
-	"github.com/alecthomas/participle"
-	"github.com/iancoleman/strcase"
-	"os"
-	"os/exec"
-	"path/filepath"
-	"strings"
-	"text/template"
 )
 
 type Engine struct {
@@ -112,7 +113,7 @@ func (e Engine) GenerateSql() error {
 			return err
 		}
 
-		protoGolang, err := golang.Map(proto.Proto)
+		protoGolang, err := golang.Map(proto.Proto, e.Config.UseSnackCase)
 		if err != nil {
 			return err
 		}
@@ -320,7 +321,7 @@ func (e Engine) GenerateAPI() error {
 		return err
 	}
 
-	protoGolang, err := golang.Map(res.Proto)
+	protoGolang, err := golang.Map(res.Proto, e.Config.UseSnackCase)
 	if err != nil {
 		return err
 	}
@@ -368,7 +369,7 @@ func (e Engine) GenerateService(useDefault bool) error {
 		return err
 	}
 
-	protoGolang, err := golang.Map(proto)
+	protoGolang, err := golang.Map(proto, e.Config.UseSnackCase)
 	if err != nil {
 		return err
 	}
@@ -418,7 +419,7 @@ func (e Engine) GenerateRepo() error {
 			return err
 		}
 
-		model, err := golang.Map(proto.Proto)
+		model, err := golang.Map(proto.Proto, e.Config.UseSnackCase)
 		if err != nil {
 			return err
 		}

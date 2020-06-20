@@ -1,12 +1,13 @@
 package golang
 
 import (
+	"fmt"
+
 	"github.com/miraclew/tao/pkg/slice"
 	"github.com/miraclew/tao/tools/tao/parser/proto3"
-	"fmt"
 )
 
-func Map(proto *proto3.Proto) (*ProtoGolang, error) {
+func Map(proto *proto3.Proto, useSnackCase bool) (*ProtoGolang, error) {
 	var tm TypeMapper
 	em := EnumMapper{}
 
@@ -32,7 +33,10 @@ func Map(proto *proto3.Proto) (*ProtoGolang, error) {
 			enums = append(enums, e)
 		}
 	}
-	mm := MessageMapper{FieldMapper{tm, enums}}
+	mm := MessageMapper{
+		FieldMapper:  FieldMapper{tm, enums},
+		UseSnackCase: useSnackCase,
+	}
 	sm := ServiceMapper{tm}
 
 	var ignoreMessages = slice.StringSlice{"Time", "Any", "Key"}

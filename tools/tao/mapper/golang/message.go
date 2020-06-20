@@ -9,6 +9,7 @@ import (
 
 type MessageMapper struct {
 	FieldMapper
+	UseSnackCase bool
 }
 
 func (mm MessageMapper) Map(message *proto3.Message) (*Message, error) {
@@ -34,7 +35,10 @@ func (mm MessageMapper) Map(message *proto3.Message) (*Message, error) {
 			return nil, err
 		}
 
-		tags := fmt.Sprintf(`json:"%s"`, strcase.ToSnake(field.Name))
+		tags := ""
+		if mm.UseSnackCase {
+			tags = fmt.Sprintf(`json:"%s"`, strcase.ToSnake(field.Name))
+		}
 		if s.Model {
 			tags += fmt.Sprintf(` db:"%s"`, field.Name)
 		}
