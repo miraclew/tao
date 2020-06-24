@@ -39,12 +39,30 @@ message Response {
     int32 Code = 3;
 }
 
-message GetByIdRequest {
-    int64 Id = 1;
-}
-
 message UserAvatar {
     int64 Id = 1;
     string Nickname = 2;
     string Avatar = 3;
+}
+
+message LimitOffset {
+    int64 Offset = 1;
+	int32 Limit  = 2;
+}
+
+message QueryRequest {
+    int64 Offset = 1;
+    int32 Limit  = 2;
+    map<string, Any> Filter = 3;
+    string Sort = 4;
+}
+
+message GetRequest {
+    int64 Id = 1;
+    map<string, Any> Filter = 2;
+}
+
+message UpdateRequest {
+    int64 Id = 1;
+    map<string, Any> Values = 2;
 }
