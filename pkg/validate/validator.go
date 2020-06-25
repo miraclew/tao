@@ -5,7 +5,7 @@ type Validatable interface {
 }
 
 func Validate(v interface{}) error {
-	if va := v.(Validatable); va != nil {
+	if va, ok := v.(Validatable); ok {
 		return va.Validate()
 	}
 	return nil
