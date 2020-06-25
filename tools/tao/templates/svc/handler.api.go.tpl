@@ -4,6 +4,7 @@ package {{.Pkg}}svc
 import (
 	"{{.Module}}/{{.Pkg}}"
 	"github.com/miraclew/tao/pkg/ac"
+	"github.com/miraclew/tao/pkg/validate"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
 )
@@ -26,7 +27,7 @@ func (h *handler) {{.Name}}(c echo.Context) error {
 	if err := c.Bind(req); err != nil {
 		return err
 	}
-	if err := req.Validate(); err != nil {
+	if err := validate.Validate(req); err != nil {
 		return err
 	}
 

@@ -58,10 +58,4 @@ type {{.Name}} struct {
 {{- end}}
 }
 
-{{if hasSuffix "Request" .Name -}}
-func (req *{{.Name}}) Validate() error {
-	return nil
-}
-
-{{end}}
 {{- end}}
