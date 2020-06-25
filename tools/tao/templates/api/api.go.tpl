@@ -46,12 +46,10 @@ type {{.Event.Name}} interface {
 {{- range .Event.Methods}}
 	Handle{{.Name}}(f func(ctx context.Context, req *{{.Request}}) error)
 {{- end}}
-}
-
-{{end}}
+}{{end}}
 
 {{- range .Messages}}
-{{- $m := . -}}
+{{ $m := . }}
 type {{.Name}} struct {
 {{- range .Fields}}
 	{{.Name}} {{.Type}}{{if .Tags}} `{{.Tags}}`{{end}}
