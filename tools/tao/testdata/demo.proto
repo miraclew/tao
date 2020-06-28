@@ -7,7 +7,8 @@ package DemoService.v1;
 option (app) = "Core";
 option (resource) = "DemoService";
 
-// Communication/Messaging Pattern
+// Application messaging Patterns:
+// RPC/Socket/Event/Queue
 
 // RPC (public) Request/Response
 service DemoRpc {
