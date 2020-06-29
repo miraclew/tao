@@ -1,7 +1,9 @@
 package ir
 
 import (
+	"fmt"
 	"github.com/miraclew/tao/tools/tao/parser/proto3"
+	"github.com/miraclew/tao/tools/tao/proto"
 	"strings"
 )
 
@@ -14,8 +16,14 @@ func NewServiceMapper(tm TypeMapper) ServiceMapper {
 }
 
 func (s2 serviceMapper) Map(s *proto3.Service) (*Service, error) {
+	st, _ := proto.ParseServiceName(s.Name)
+	if st == proto.ServiceUnknown {
+		return nil, fmt.Errorf("unknown service type for name %s", s.Name)
+	}
+
 	v := &Service{
 		Name:    s.Name,
+		Type:    st,
 		Methods: []Method{},
 	}
 

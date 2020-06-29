@@ -4,29 +4,29 @@ import Foundation
 class DemoRpcService {
   let app = "Core"
   static let shared = DemoRpcService()
-
   private init() {}
-
 
   func create(req: NewThing, completion: @escaping (NewThingResult?, Error?) -> ()) {
     APIClient.shared.rpc(app: app, path: "/v1/demoservice/create", req: req, completion: completion)
   }
+  
 }
+
 class DemoSocketService {
   let app = "Core"
   static let shared = DemoSocketService()
-
   private init() {}
 
-
-  func sendClientMessage(req: ClientMessage, completion: @escaping (Empty?, Error?) -> ()) {
-    APIClient.shared.rpc(app: app, path: "/v1/demoservice/sendclientmessage", req: req, completion: completion)
+  func sendClientMessage(req: ClientMessage) {
+    SocketClient.shared.send(data: req)
+  }
+  
+  func recvServerMessage(handler: @escaping (msg: ServerMessage) -> ()) {
+    SocketClient.shared.subscribe("ServerMessage", handler: handler)
   }
 
-  func recvServerMessage(req: ServerMessage, completion: @escaping (Empty?, Error?) -> ()) {
-    APIClient.shared.rpc(app: app, path: "/v1/demoservice/recvservermessage", req: req, completion: completion)
-  }
 }
+
 
 
 struct ClientMessage: Codable {
