@@ -1,6 +1,7 @@
 package golang
 
 import (
+	"github.com/miraclew/tao/tools/tao/proto"
 	"strings"
 )
 
@@ -10,32 +11,16 @@ type ProtoGolang struct {
 	URL      string
 	Enums    []*Enum
 	Messages []*Message
-	Service  *Service
-	Event    *Service
+	Services []*Service
 }
 
 func (p *ProtoGolang) Pkg() string {
 	return strings.ToLower(p.Name)
 }
 
-// The first model
-func (p *ProtoGolang) PrimaryModel() *Message {
-	return p.ModelMessages()[0]
-}
-
-func (p *ProtoGolang) ModelMessages() []*Message {
-	var ms []*Message
-	for _, e := range p.Messages {
-		if !e.Model {
-			continue
-		}
-		ms = append(ms, e)
-	}
-	return ms
-}
-
 type Service struct {
 	Name    string
+	Type    proto.ServiceType
 	Methods []Method
 }
 

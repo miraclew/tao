@@ -1,17 +1,23 @@
 package golang
 
 import (
+	"fmt"
 	"github.com/miraclew/tao/tools/tao/parser/proto3"
-	"strings"
+	"github.com/miraclew/tao/tools/tao/proto"
 )
 
 type ServiceMapper struct {
 	TypeMapper
 }
 
-func (s2 ServiceMapper) Map(s *proto3.Service) (*Service, error) {
+func (m ServiceMapper) Map(s *proto3.Service) (*Service, error) {
+	st, name := proto.ParseServiceName(s.Name)
+	if st == proto.ServiceUnknown {
+		return nil, fmt.Errorf("unknown service type for name %s", s.Name)
+	}
 	v := &Service{
-		Name:    s.Name,
+		Name:    name,
+		Type:    st,
 		Methods: []Method{},
 	}
 
@@ -20,8 +26,8 @@ func (s2 ServiceMapper) Map(s *proto3.Service) (*Service, error) {
 			continue
 		}
 
-		p, _ := s2.TypeMapper.Map(entry.Method.Request)
-		r, _ := s2.TypeMapper.Map(entry.Method.Response)
+		p, _ := m.TypeMapper.Map(entry.Method.Request)
+		r, _ := m.TypeMapper.Map(entry.Method.Response)
 		if entry.Method.StreamingRequest {
 			p = "chan " + p
 		}
@@ -30,9 +36,6 @@ func (s2 ServiceMapper) Map(s *proto3.Service) (*Service, error) {
 		}
 
 		name := entry.Method.Name
-		if s.Name == "Event" {
-			name = strings.TrimPrefix(name, "Handle")
-		}
 		method := Method{
 			Name:     name,
 			Request:  p,
@@ -40,5 +43,6 @@ func (s2 ServiceMapper) Map(s *proto3.Service) (*Service, error) {
 		}
 		v.Methods = append(v.Methods, method)
 	}
+
 	return v, nil
 }

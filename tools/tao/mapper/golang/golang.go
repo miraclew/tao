@@ -9,9 +9,9 @@ import (
 
 func Map(proto *proto3.Proto, useSnackCase bool) (*ProtoGolang, error) {
 	var tm TypeMapper
-	em := EnumMapper{}
 
 	// enums
+	em := EnumMapper{}
 	var enums []*Enum
 	for _, entry := range proto.Entries {
 		if entry.Message != nil {
@@ -33,12 +33,11 @@ func Map(proto *proto3.Proto, useSnackCase bool) (*ProtoGolang, error) {
 			enums = append(enums, e)
 		}
 	}
+	// messages
 	mm := MessageMapper{
 		FieldMapper:  FieldMapper{tm, enums},
 		UseSnackCase: useSnackCase,
 	}
-	sm := ServiceMapper{tm}
-
 	var ignoreMessages = slice.StringSlice{"Time", "Any", "Key"}
 	var messages []*Message
 	for _, entry := range proto.Entries {
@@ -55,19 +54,16 @@ func Map(proto *proto3.Proto, useSnackCase bool) (*ProtoGolang, error) {
 	}
 
 	// services
-	var service *Service
-	var event *Service
+	sm := ServiceMapper{tm}
+	var services []*Service
 	var err error
 	for _, entry := range proto.Entries {
 		if entry.Service != nil {
-			if entry.Service.Name == "Service" {
-				service, err = sm.Map(entry.Service)
-			} else if entry.Service.Name == "Event" {
-				event, err = sm.Map(entry.Service)
-			}
+			service, err := sm.Map(entry.Service)
 			if err != nil {
 				return nil, err
 			}
+			services = append(services, service)
 		}
 	}
 
@@ -79,8 +75,7 @@ func Map(proto *proto3.Proto, useSnackCase bool) (*ProtoGolang, error) {
 	protoIR := &ProtoGolang{
 		Name:     resource,
 		Enums:    enums,
-		Service:  service,
-		Event:    event,
+		Services: services,
 		Messages: messages,
 	}
 

@@ -311,12 +311,8 @@ func (e Engine) GenerateProto() error {
 	})
 }
 
-func (e Engine) GenerateAPI() error {
-	if e.Workspace.CurrentResource == "" {
-		return errors.New("this command should be execute in resource dir")
-	}
-
-	res, err := parser.ParseProto3(e.Workspace.CurrentResource + ".proto")
+func (e Engine) GenerateAPI(pbFile string) error {
+	res, err := parser.ParseProto3(pbFile)
 	if err != nil {
 		return err
 	}

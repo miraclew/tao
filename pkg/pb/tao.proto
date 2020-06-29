@@ -8,6 +8,13 @@ extend google.protobuf.FileOptions {
     string resource = 50002;
 }
 
+enum ServiceTransport {
+    Unknown = 0;
+    HttpRpc = 1;
+    Queue = 2;
+    PubSub = 3;
+}
+
 extend google.protobuf.ServiceOptions {
     bool internal = 50010; // internal only service
 }
