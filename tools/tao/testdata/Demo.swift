@@ -11,7 +11,6 @@ class DemoRpcService {
   }
   
 }
-
 class DemoSocketService {
   let app = "Core"
   static let shared = DemoSocketService()
@@ -26,8 +25,6 @@ class DemoSocketService {
   }
 
 }
-
-
 
 struct ClientMessage: Codable {
 }
@@ -44,4 +41,5 @@ struct NewThingResult: Codable {
   var code: String
   var version: String
 }
+
 

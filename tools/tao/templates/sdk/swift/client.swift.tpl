@@ -33,13 +33,13 @@ class {{.Name}}Service {
   }{{end}}
   {{- end}}
 {{end}}
-}
-{{end}}
+}{{end}}
 
-{{range .Messages}}
+{{range .Messages -}}
 struct {{.Name}}: Codable {
 {{- range .Fields}}
   var {{.Name}}: {{.Type.String}}
 {{- end}}
 }
+
 {{end}}
