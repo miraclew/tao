@@ -68,19 +68,16 @@ func (p protoMapper) Map(proto *proto3.Proto) (*ir.ProtoIR, error) {
 	}
 
 	// services
-	var service *ir.Service
-	var event *ir.Service
+	var services []*ir.Service
 	var err error
+
 	for _, entry := range proto.Entries {
 		if entry.Service != nil {
-			if entry.Service.Name == "Service" {
-				service, err = sm.Map(entry.Service)
-			} else if entry.Service.Name == "Event" {
-				event, err = sm.Map(entry.Service)
-			}
+			service, err := sm.Map(entry.Service)
 			if err != nil {
 				return nil, err
 			}
+			services = append(services, service)
 		}
 	}
 
@@ -97,8 +94,7 @@ func (p protoMapper) Map(proto *proto3.Proto) (*ir.ProtoIR, error) {
 		App:      app,
 		Name:     resource,
 		Enums:    enums,
-		Service:  service,
-		Event:    event,
+		Services: services,
 		Messages: messages,
 	}
 

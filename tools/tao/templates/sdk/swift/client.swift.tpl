@@ -10,18 +10,22 @@ enum {{.Name}}: Int, Codable {
 }
 {{end }}
 
+{{- $app := .App }}
+{{- range .Services}}
 class {{.Name}}Service {
-  let app = "{{.App}}"
+  let app = "{{$app}}"
   static let shared = {{.Name}}Service()
 
   private init() {}
 
-{{range .Service.Methods}}
+{{range .Methods}}
   func {{.Name}}(req: {{.Request}}, completion: @escaping ({{.Response}}?, Error?) -> ()) {
     APIClient.shared.rpc(app: app, path: "/v1/{{$.Name|lower}}/{{.Name|lower}}", req: req, completion: completion)
   }
 {{end -}}
 }
+{{- end}}
+
 {{range .Messages}}
 struct {{.Name}}: Codable {
 {{- range .Fields}}

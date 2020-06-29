@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+import "tao.proto";
+import "./demo.proto";
+
+package DemoService.v1;
+
+option (app) = "Core";
+option (resource) = "DemoService";
+
+// Events(internal) can be subscribe to
+service DemoEvent {
+    // Subscribe + MessageType
+    rpc HandleCreatedEvent(ThingCreatedEvent) returns (Empty);
+}
+
+// Queues(internal) of this service can be written to
+service DemoQueue {
+    // Push + MessageType
+    rpc PushMessage(PublishMessage) returns (Empty);
+    // Pop + MessageType
+    rpc PopMessage(Empty) returns (PublishMessage);
+}
+
+message PublishMessage {
+}
+
+message ThingCreatedEvent {
+    NewThing Things = 1;
+}

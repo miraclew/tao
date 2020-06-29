@@ -1,19 +1,22 @@
 package ir
 
-import "fmt"
+import (
+	"fmt"
+	"github.com/miraclew/tao/tools/tao/proto"
+)
 
 // ProtoIR is proto intermediate representative
 type ProtoIR struct {
 	Name     string // api name, cap camel
 	App      string
 	Enums    []*Enum
-	Service  *Service
-	Event    *Service
+	Services []*Service
 	Messages []*Message
 }
 
 type Service struct {
 	Name    string
+	Type    proto.ServiceType
 	Methods []Method
 }
 
