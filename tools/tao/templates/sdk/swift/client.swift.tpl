@@ -12,24 +12,35 @@ enum {{.Name}}: Int, Codable {
 
 {{- $app := .App }}
 {{- range .Services}}
+{{if eq .Type 2 -}}
+protocol {{.Name}}Delegate {
+  {{- range .Methods}}
+  {{- if hasPrefix "recv" .Name}}
+  func {{.Name}}(data: {{.Request}})
+  {{- end}}
+  {{- end}}
+}
+{{- end}}
+{{end}}
+
+{{- range .Services}}
 class {{.Name}}Service {
   let app = "{{$app}}"
   static let shared = {{.Name}}Service()
   private init() {}
 {{if eq .Type 1 -}}
+
   {{- range .Methods }}
   func {{.Name}}(req: {{.Request}}, completion: @escaping ({{.Response}}?, Error?) -> ()) {
     APIClient.shared.rpc(app: app, path: "/v1/{{$.Name|lower}}/{{.Name|lower}}", req: req, completion: completion)
   }
   {{end -}}
 {{- else if eq .Type 2 }}
-  {{- range .Methods}}{{if hasPrefix "send" .Name}}
+  var delegate: {{.Name}}Delegate?
+
+  {{range .Methods}}{{if hasPrefix "send" .Name -}}
   func {{.Name}}(req: {{.Request}}) {
     SocketClient.shared.send(data: req)
-  }
-  {{else}}
-  func {{.Name}}(handler: @escaping (_ msg: {{.Request}}) -> ()) {
-    SocketClient.shared.subscribe("{{ trimPrefix "recv" .Name}}", handler: handler)
   }{{end}}
   {{- end}}
 {{end}}
