@@ -26,19 +26,19 @@ func DetectWorkspace(baseDir string) (*Workspace, error) {
 		return nil, err
 	}
 
-	p.ResourceDirs, err = DetectServiceDirs(p.HomeDir)
-	if err != nil {
-		return nil, err
-	}
-
-	exists, err := ProtoFileExists(baseDir)
-	if err != nil {
-		return nil, err
-	}
-	if exists {
-		dir, _ := os.Getwd()
-		p.CurrentResource = filepath.Base(dir)
-	}
+	//p.ResourceDirs, err = DetectServiceDirs(p.HomeDir)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//
+	//exists, err := ProtoFileExists(baseDir)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//if exists {
+	//	dir, _ := os.Getwd()
+	//	p.CurrentResource = filepath.Base(dir)
+	//}
 
 	taoHomePath := filepath.Join(os.Getenv("HOME"), ".tao")
 	p.TemplateDir = filepath.Join(taoHomePath, "src/tools/tao/templates")

@@ -28,7 +28,7 @@ class {{.Name}}Service {
     SocketClient.shared.send(data: req)
   }
   {{else}}
-  func {{.Name}}(handler: @escaping (msg: {{.Request}}) -> ()) {
+  func {{.Name}}(handler: @escaping (_ msg: {{.Request}}) -> ()) {
     SocketClient.shared.subscribe("{{ trimPrefix "recv" .Name}}", handler: handler)
   }{{end}}
   {{- end}}

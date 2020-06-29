@@ -24,23 +24,21 @@ import (
 )
 
 type Engine struct {
-	Workspace   *Workspace
-	Config      *Config
-	TemplateDir string
+	Workspace *Workspace
+	Config    *Config
 }
 
 func NewEngine() (*Engine, error) {
-	//workspace, err := DetectWorkspace(".")
-	//if err != nil {
-	//	return nil, err
-	//}
+	workspace, err := DetectWorkspace(".")
+	if err != nil {
+		return nil, err
+	}
 
-	//config, err := NewConfig(workspace.HomeDir)
-	//if err != nil {
-	//	return nil, err
-	//}
-	//return &Engine{Workspace: workspace, Config: config}, nil
-	return &Engine{}, nil
+	config, err := NewConfig(workspace.HomeDir)
+	if err != nil {
+		return nil, err
+	}
+	return &Engine{Workspace: workspace, Config: config}, nil
 }
 
 func (e Engine) GenerateLocator() error {
@@ -184,11 +182,12 @@ func (e Engine) GenerateSwift(protoFile string) error {
 		fileName = filepath.Join(swiftDir, strings.Title(baseFileName)+".swift")
 	}
 
+	fmt.Printf("output: %s", fileName)
 	outputFile, err := os.Create(fileName)
 	if err != nil {
 		return err
 	}
-	tplFile := filepath.Join(e.TemplateDir, "sdk/swift/client.swift.tpl")
+	tplFile := filepath.Join(e.Workspace.TemplateDir, "sdk/swift/client.swift.tpl")
 
 	tpl, err := template.New(filepath.Base(tplFile)).Funcs(sprig.TxtFuncMap()).ParseFiles(tplFile)
 	if err != nil {
@@ -334,7 +333,7 @@ func (e Engine) GenerateAPI(pbFile string) error {
 			return err
 		}
 
-		tplFile := filepath.Join(e.TemplateDir, fmt.Sprintf("api/%s.go.tpl", file))
+		tplFile := filepath.Join(e.Workspace.TemplateDir, fmt.Sprintf("api/%s.go.tpl", file))
 		tpl, err := template.New(filepath.Base(tplFile)).Funcs(sprig.TxtFuncMap()).ParseFiles(tplFile)
 		if err != nil {
 			return err

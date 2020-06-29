@@ -17,6 +17,7 @@ func TestEngine_GenerateAPI(t *testing.T) {
 		UseSnackCase:   false,
 		Dependencies:   nil,
 	}
+
 	e.TemplateDir = "../templates"
 	err = e.GenerateAPI(protoFile)
 	if err != nil {

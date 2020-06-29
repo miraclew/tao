@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/miraclew/tao/tools/tao/generator"
 	"fmt"
+	"github.com/miraclew/tao/tools/tao/generator"
 	"log"
 	"os"
 
@@ -65,7 +65,7 @@ func main() {
 			Aliases: []string{"a"},
 			Usage:   "创建API文件",
 			Action: func(context *cli.Context) error {
-				return e.GenerateAPI()
+				return e.GenerateAPI(context.Args().First())
 			},
 			SkipFlagParsing: true,
 		},
@@ -132,7 +132,7 @@ func main() {
 			Name:  "swift",
 			Usage: "创建Swift客户端",
 			Action: func(context *cli.Context) error {
-				return e.GenerateSwift()
+				return e.GenerateSwift(context.Args().First())
 			},
 			SkipFlagParsing: true,
 		},
