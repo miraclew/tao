@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/miraclew/tao/tools/tao/parser/proto3"
 	"github.com/miraclew/tao/tools/tao/proto"
+	"strings"
 )
 
 type ServiceMapper struct {
@@ -11,12 +12,12 @@ type ServiceMapper struct {
 }
 
 func (m ServiceMapper) Map(s *proto3.Service) (*Service, error) {
-	st, name := proto.ParseServiceName(s.Name)
+	st, _ := proto.ParseServiceName(s.Name)
 	if st == proto.ServiceUnknown {
 		return nil, fmt.Errorf("unknown service type for name %s", s.Name)
 	}
 	v := &Service{
-		Name:    name,
+		Name:    s.Name,
 		Type:    st,
 		Methods: []Method{},
 	}
@@ -35,7 +36,18 @@ func (m ServiceMapper) Map(s *proto3.Service) (*Service, error) {
 			r = "chan " + r
 		}
 
+		// process method name
 		name := entry.Method.Name
+		if st == proto.ServiceSocket {
+			if strings.Index(name, "Recv") != -1 {
+				continue
+			}
+			idx := strings.Index(name, "Send")
+			if idx != -1 {
+				name = strings.TrimPrefix(name, "Send")
+			}
+		}
+
 		method := Method{
 			Name:     name,
 			Request:  p,

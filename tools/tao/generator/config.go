@@ -7,6 +7,7 @@ import (
 )
 
 type Config struct {
+	GoOutputDir    string
 	SwiftOutputDir string
 	DartOutputDir  string
 	UseSnackCase   bool

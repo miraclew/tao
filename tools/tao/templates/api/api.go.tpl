@@ -35,18 +35,33 @@ const (
 )
 {{- end}}
 
-type {{.Service.Name}} interface {
-{{- range .Service.Methods}}
+{{- range .Services}}
+{{if eq .Type 1 }}
+type {{.Name}} interface {
+	{{- range .Methods}}
 	{{.Name}}(ctx context.Context, req *{{.Request}}) (*{{.Response}}, error)
-{{- end}}
+	{{- end}}
 }
-
-{{if .Event -}}
-type {{.Event.Name}} interface {
-{{- range .Event.Methods}}
-	Handle{{.Name}}(f func(ctx context.Context, req *{{.Request}}) error)
+{{- else if eq .Type 2 }}
+type {{.Name}}Server interface {
+	{{- range .Methods}}
+	Handle{{.Name}}(ctx context.Context, req *{{.Request}}) error
+	{{- end}}
+}
+{{- else if eq .Type 3 }}
+type {{.Name}} interface {
+	{{- range .Methods}}
+	{{.Name}}(f func(ctx context.Context, req *{{.Request}}) error)
+	{{- end}}
+}
+{{- else}}
+type {{.Name}} interface {
+	{{- range .Methods}}
+	{{.Name}}(f func(ctx context.Context, req *{{.Request}}) error)
+	{{- end}}
+}
+{{end}}
 {{- end}}
-}{{end}}
 
 {{- range .Messages}}
 {{ $m := . }}

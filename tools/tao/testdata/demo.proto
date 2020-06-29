@@ -26,7 +26,7 @@ service DemoSocket {
 // Events(internal) can be subscribe to
 service DemoEvent {
     // Subscribe + MessageType
-    rpc SubscribeCreatedEvent(ThingCreatedEvent) returns (Empty);
+    rpc HandleCreatedEvent(ThingCreatedEvent) returns (Empty);
 }
 
 // Queues(internal) of this service can be written to

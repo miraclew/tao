@@ -24,21 +24,23 @@ import (
 )
 
 type Engine struct {
-	Workspace *Workspace
-	Config    *Config
+	Workspace   *Workspace
+	Config      *Config
+	TemplateDir string
 }
 
 func NewEngine() (*Engine, error) {
-	workspace, err := DetectWorkspace(".")
-	if err != nil {
-		return nil, err
-	}
+	//workspace, err := DetectWorkspace(".")
+	//if err != nil {
+	//	return nil, err
+	//}
 
-	config, err := NewConfig(workspace.HomeDir)
-	if err != nil {
-		return nil, err
-	}
-	return &Engine{Workspace: workspace, Config: config}, nil
+	//config, err := NewConfig(workspace.HomeDir)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//return &Engine{Workspace: workspace, Config: config}, nil
+	return &Engine{}, nil
 }
 
 func (e Engine) GenerateLocator() error {
@@ -321,19 +323,17 @@ func (e Engine) GenerateAPI(pbFile string) error {
 	if err != nil {
 		return err
 	}
-	protoGolang.Module = e.Workspace.Module
+	//protoGolang.Module = e.Workspace.Module
+	protoGolang.Module = "hello.world.module"
 
 	files := []string{"api", "client"}
-	if res.EventService != nil {
-		files = append(files, "event")
-	}
 	for _, file := range files {
-		outputFile, err := os.Create(fmt.Sprintf("%s.go", file))
+		outputFile, err := os.Create(filepath.Join(e.Config.GoOutputDir, fmt.Sprintf("%s.go", file)))
 		if err != nil {
 			return err
 		}
 
-		tplFile := filepath.Join(e.Workspace.TemplateDir, fmt.Sprintf("api/%s.go.tpl", file))
+		tplFile := filepath.Join(e.TemplateDir, fmt.Sprintf("api/%s.go.tpl", file))
 		tpl, err := template.New(filepath.Base(tplFile)).Funcs(sprig.TxtFuncMap()).ParseFiles(tplFile)
 		if err != nil {
 			return err

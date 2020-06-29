@@ -1,10 +1,10 @@
 package parser
 
 import (
-	"github.com/miraclew/tao/tools/tao/parser/proto3"
 	"errors"
 	"fmt"
 	"github.com/alecthomas/participle"
+	"github.com/miraclew/tao/tools/tao/parser/proto3"
 	"os"
 	"strings"
 )
@@ -28,32 +28,8 @@ func ParseProto3(file string) (*Result, error) {
 		return nil, err
 	}
 
-	resource, err := ResourceName(proto)
-	if err != nil {
-		return nil, err
-	}
-
-	resourceMessage, err := ResourceMessage(proto)
-	if err != nil && err != ErrModelNotFound {
-		return nil, err
-	}
-	apiService, err := Service(proto, "Service")
-	if err != nil {
-		return nil, err
-	}
-	eventService, err := Service(proto, "Event")
-	if err != nil && err != ErrServiceNotFound {
-		return nil, err
-	}
-
 	return &Result{
-		Proto:           proto,
-		ResourceName:    resource,
-		APIService:      apiService,
-		EventService:    eventService,
-		ResourceMessage: resourceMessage,
-		APIMessages:     QueryMessages(proto, []string{"Request", "Response"}),
-		EventMessages:   QueryMessages(proto, []string{"Event"}),
+		Proto: proto,
 	}, nil
 }
 
