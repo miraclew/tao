@@ -350,15 +350,12 @@ func (e Engine) GenerateAPI(pbFile string) error {
 	return nil
 }
 
-func (e Engine) GenerateService(useDefault bool) error {
-	if e.Workspace.CurrentResource == "" {
-		return errors.New("this command should be execute in resource dir")
-	}
+func (e Engine) GenerateService(protoFile string, useDefault bool) error {
 	_ = os.MkdirAll("svc", 0755)
 
 	var p = participle.MustBuild(&proto3.Proto{}, participle.UseLookahead(2))
 	proto := &proto3.Proto{}
-	r, err := os.Open(e.Workspace.CurrentResource + ".proto")
+	r, err := os.Open(protoFile)
 	if err != nil {
 		return err
 	}
@@ -374,8 +371,8 @@ func (e Engine) GenerateService(useDefault bool) error {
 	}
 	protoGolang.Module = e.Workspace.Module
 
-	files := []string{"handler.api", "handler.event", "service"}
-	tplFiles := []string{"handler.api", "handler.event", "service"}
+	files := []string{"handler.rpc", "handler.event", "service"}
+	tplFiles := []string{"handler.rpc", "handler.event", "service"}
 	if useDefault {
 		tplFiles[2] = "service_default"
 	}
