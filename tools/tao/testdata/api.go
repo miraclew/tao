@@ -20,26 +20,14 @@ type DemoSocketServer interface {
 	HandleClientMessage(ctx context.Context, req *ClientMessage) error
 }
 
-type DemoEvent interface {
-	HandleCreatedEvent(f func(ctx context.Context, req *ThingCreatedEvent) error)
-}
-
-type DemoQueue interface {
-	PushMessage(f func(ctx context.Context, req *PublishMessage) error)
-	PopMessage(f func(ctx context.Context, req *pb.Empty) error)
-}
-
-
 type ClientMessage struct {
+	Id int64
+	UserId int64
+	Type int32
+	SubType string
 }
 
 type ServerMessage struct {
-}
-
-type PublishMessage struct {
-}
-
-type ThingCreatedEvent struct {
 }
 
 type NewThing struct {

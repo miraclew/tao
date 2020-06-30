@@ -6,9 +6,10 @@ import (
 
 func TestEngine_GenerateAPI(t *testing.T) {
 	protoFile := "../testdata/demo.proto"
-	e, err := NewEngine()
+	e, err := NewEngineWithBaseDir("../../..")
 	if err != nil {
 		t.Error(err)
+		return
 	}
 	e.Config = &Config{
 		GoOutputDir:    "../testdata",
@@ -48,7 +49,7 @@ func TestEngine_GenerateSwift(t *testing.T) {
 	e.Workspace = &Workspace{
 		HomeDir:         "",
 		TemplateDir:     "../templates",
-		Module:          "Hello",
+		Module:          "hello",
 		ResourceDirs:    nil,
 		CurrentResource: "",
 	}

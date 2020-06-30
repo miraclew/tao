@@ -16,6 +16,7 @@ require (
 	github.com/imdario/mergo v0.3.9 // indirect
 	github.com/labstack/echo/v4 v4.1.16
 	github.com/mitchellh/copystructure v1.0.0 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sirupsen/logrus v1.6.0
 	github.com/urfave/cli/v2 v2.2.0
 )

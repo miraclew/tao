@@ -327,8 +327,7 @@ func (e Engine) GenerateAPI(pbFile string) error {
 	if err != nil {
 		return err
 	}
-	//protoGolang.Module = e.Workspace.Module
-	protoGolang.Module = "hello.world.module"
+	protoGolang.Module = e.Workspace.Module
 
 	files := []string{"api", "client"}
 	for _, file := range files {

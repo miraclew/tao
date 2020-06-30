@@ -8,6 +8,7 @@ import (
     "github.com/miraclew/tao/pkg/pb"
     "github.com/miraclew/tao/pkg/ac"
     "github.com/miraclew/tao/pkg/auth"
+    "github.com/miraclew/tao/pkg/broker"
     "encoding/json"
     "github.com/pkg/errors"
     "io/ioutil"
@@ -17,18 +18,21 @@ import (
 
 var _ = pb.Empty{}
 
-type Client struct {
+{{range .Services -}}
+{{ $serviceName := .Name -}}
+{{if eq .Type 1 }}
+type {{.Name}}Client struct {
     http.Client
     BaseUrl string
     Issuer auth.Issuer
 }
 
-func (c *Client) Name() string {
+func (c *{{.Name}}Client) Name() string {
     return "{{.Name}}Service"
 }
 
-{{range .Service.Methods -}}
-func (c *Client) {{.Name}}(ctx context.Context, req *{{.Request}}) (*{{.Response}}, error) {
+{{range .Methods -}}
+func (c *{{$serviceName}}Client) {{.Name}}(ctx context.Context, req *{{.Request}}) (*{{.Response}}, error) {
     res := new({{.Response }})
     err := c.do(ctx, "/v1/{{$.Name|lower}}/{{.Name | lower}}", req, res)
     if err != nil {
@@ -36,9 +40,10 @@ func (c *Client) {{.Name}}(ctx context.Context, req *{{.Request}}) (*{{.Response
     }
     return res, nil
 }
+
 {{end}}
 
-func (c *Client) do(ctx context.Context, path string, req interface{}, res interface{}) error {
+func (c *{{.Name}}Client) do(ctx context.Context, path string, req interface{}, res interface{}) error {
     ctx2 := ac.FromContext(ctx)
 
     token, _, err := c.Issuer.Issue(ctx2.Identity(), time.Minute*10)
@@ -80,3 +85,28 @@ func (c *Client) do(ctx context.Context, path string, req interface{}, res inter
     }
     return nil
 }
+
+{{- else if eq .Type 3 }}
+type {{.Name}}Client struct {
+    broker.Subscriber
+}
+
+func (e *{{.Name}}Client) Name() string {
+    return "{{.Name}}Event"
+}
+
+{{range .Methods -}}
+func (e *{{$serviceName}}Client) Handle{{.Name}}(f func(ctx context.Context, req *{{.Request}}) error) {
+    fmt.Println("event client: subscribe {{$serviceName}}.{{.Name}}")
+    _, _ = e.Subscribe("{{$serviceName}}.{{.Name}}", func(topic string, msg []byte) error {
+        var req = new({{.Request}})
+        err := json.Unmarshal(msg, req)
+        if err != nil {
+            return err
+        }
+        return f(ac.NewInternal("{{$serviceName}}"), req)
+    })
+}
+{{end}}
+{{end}}
+{{end}}
