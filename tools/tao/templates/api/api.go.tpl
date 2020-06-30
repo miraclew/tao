@@ -3,6 +3,7 @@ package {{.Pkg}}
 
 import (
 	"context"
+	"github.com/miraclew/tao/pkg/component/locator"
 	"github.com/miraclew/tao/pkg/pb"
 	"time"
 )
@@ -61,6 +62,10 @@ type {{.Name}} interface {
 	{{- end}}
 }
 {{end}}
+
+func Locate{{.Name}}() {{.Name}} {
+	return locator.Locate("{{.Name}}").({{.Name}})
+}
 {{- end}}
 
 {{- range .Messages}}
