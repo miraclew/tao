@@ -17,8 +17,14 @@ func TestEngine_GenerateAPI(t *testing.T) {
 		UseSnackCase:   false,
 		Dependencies:   nil,
 	}
+	e.Workspace = &Workspace{
+		HomeDir:         "",
+		TemplateDir:     "../templates",
+		Module:          "Hello",
+		ResourceDirs:    nil,
+		CurrentResource: "",
+	}
 
-	e.TemplateDir = "../templates"
 	err = e.GenerateAPI(protoFile)
 	if err != nil {
 		t.Error(err)
@@ -27,9 +33,10 @@ func TestEngine_GenerateAPI(t *testing.T) {
 
 func TestEngine_GenerateSwift(t *testing.T) {
 	protoFile := "../testdata/demo.proto"
-	e, err := NewEngine()
+	e, err := NewEngineWithBaseDir("../../..")
 	if err != nil {
 		t.Error(err)
+		return
 	}
 	e.Config = &Config{
 		GoOutputDir:    "../testdata",
@@ -38,7 +45,13 @@ func TestEngine_GenerateSwift(t *testing.T) {
 		UseSnackCase:   false,
 		Dependencies:   nil,
 	}
-	e.TemplateDir = "../templates"
+	e.Workspace = &Workspace{
+		HomeDir:         "",
+		TemplateDir:     "../templates",
+		Module:          "Hello",
+		ResourceDirs:    nil,
+		CurrentResource: "",
+	}
 	err = e.GenerateSwift(protoFile)
 	if err != nil {
 		t.Error(err)

@@ -29,7 +29,11 @@ type Engine struct {
 }
 
 func NewEngine() (*Engine, error) {
-	workspace, err := DetectWorkspace(".")
+	return NewEngineWithBaseDir(".")
+}
+
+func NewEngineWithBaseDir(dir string) (*Engine, error) {
+	workspace, err := DetectWorkspace(dir)
 	if err != nil {
 		return nil, err
 	}

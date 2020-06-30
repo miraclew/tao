@@ -17,6 +17,9 @@ func (f fieldMapper) Map(field *proto3.Field) (*ir.Field, error) {
 		return nil, err
 	}
 	destType := elemType
+	if field.Optional {
+		destType += "?"
+	}
 
 	isEnum := false
 	if field.Type.Reference != "" {

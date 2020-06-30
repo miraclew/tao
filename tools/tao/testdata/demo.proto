@@ -25,6 +25,10 @@ service DemoSocket {
 
 
 message ClientMessage {
+    int64 Id = 1;
+    int64 UserId = 2;
+    int32 Type = 3;
+    optional string SubType = 4;
 }
 
 message ServerMessage {

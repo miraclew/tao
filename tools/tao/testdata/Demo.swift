@@ -1,6 +1,12 @@
 import Foundation
 
 
+
+
+protocol DemoSocketDelegate {
+  func recvServerMessage(data: ServerMessage)
+}
+
 class DemoRpcService {
   let app = "Core"
   static let shared = DemoRpcService()
@@ -16,17 +22,19 @@ class DemoSocketService {
   static let shared = DemoSocketService()
   private init() {}
 
+  var delegate: DemoSocketDelegate?
+
   func sendClientMessage(req: ClientMessage) {
     SocketClient.shared.send(data: req)
-  }
-  
-  func recvServerMessage(handler: @escaping (msg: ServerMessage) -> ()) {
-    SocketClient.shared.subscribe("ServerMessage", handler: handler)
   }
 
 }
 
 struct ClientMessage: Codable {
+  var id: Int
+  var userId: Int
+  var type: Int
+  var subType: String?
 }
 
 struct ServerMessage: Codable {
