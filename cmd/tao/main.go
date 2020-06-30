@@ -74,7 +74,7 @@ func main() {
 			Aliases: []string{"s"},
 			Usage:   "创建service文件",
 			Action: func(context *cli.Context) error {
-				return e.GenerateService(context.Bool("default"))
+				return e.GenerateService(context.Args().First(), context.Bool("default"))
 			},
 			Flags: []cli.Flag{
 				&cli.BoolFlag{

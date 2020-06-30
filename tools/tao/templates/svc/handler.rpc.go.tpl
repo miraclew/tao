@@ -9,17 +9,19 @@ import (
 	"github.com/pkg/errors"
 )
 
+{{range .Services -}}
+{{if eq .Type 1 -}}
 type handler struct {
-	Service {{.Pkg}}.Service
+	Service {{$.Pkg}}.Service
 }
 
 func (h *handler) RegisterRoutes(e *echo.Echo, m ...echo.MiddlewareFunc) {
-	{{- range .Service.Methods}}
+	{{- range .Methods}}
 	e.POST("/v1/{{$.Name|lower}}/{{.Name|lower}}", h.{{.Name}}, m...)
 	{{- end}}
 }
 
-{{- range .Service.Methods}}
+{{- range .Methods}}
 
 func (h *handler) {{.Name}}(c echo.Context) error {
 	ctx := ac.FromEcho(c)
@@ -33,9 +35,11 @@ func (h *handler) {{.Name}}(c echo.Context) error {
 
 	res, err := h.Service.{{.Name}}(ctx, req)
 	if err != nil {
-		return errors.Wrap(err, "handler: get error")
+		return errors.Wrap(err, "handler: {{.Name}} error")
 	}
 
 	return c.JSON(200, res)
 }
+{{- end}}
+{{- end}}
 {{- end}}
