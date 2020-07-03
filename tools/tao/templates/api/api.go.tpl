@@ -44,7 +44,7 @@ type {{.Name}} interface {
 	{{- end}}
 }
 {{- else if eq .Type 2 }}
-type {{.Name}}Server interface {
+type {{.Name}} interface {
 	{{- range .Methods}}
 	Handle{{.Name}}(ctx context.Context, req *{{.Request}}) error
 	{{- end}}
