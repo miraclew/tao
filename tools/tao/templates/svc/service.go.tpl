@@ -12,13 +12,9 @@ type DefaultService struct {
 }
 
 func NewService() *DefaultService {
-	{{- /*conf := locator.Config()*/ -}}
-	{{- /*db, err := sqlx.Connect("mysql", conf.MysqlAddr)*/ -}}
-
 	s := &DefaultService{}
-	locator.Register(s.Name()+"Service", s)
-	locator.Register(s.Name()+"Event", &{{.Pkg}}.EventSubscriber{Subscriber: locator.Subscriber()})
-
+	{{/*locator.Register(s.Name()+"Service", s)*/}}
+	{{/*locator.Register(s.Name()+"Event", &{{.Pkg}}.EventClient{Subscriber: locator.Subscriber()})*/}}
 	return s
 }
 
@@ -36,8 +32,10 @@ func (s *DefaultService) RegisterRouter(e *echo.Echo, m ...echo.MiddlewareFunc) 
 	h.RegisterRoutes(e, m...)
 }
 
-{{- range .Service.Methods}}
+{{- range .Services}}
+{{- range .Methods}}
 func (s *DefaultService) {{.Name}}(ctx context.Context, req *{{$.Pkg}}.{{.Request}}) (*{{$.Pkg}}.{{.Response}}, error) {
 	panic("not implemented")
 }
+{{end}}
 {{- end}}

@@ -1,5 +1,7 @@
 package broker
 
+import "github.com/miraclew/tao/pkg/component/locator"
+
 type Publisher interface {
 	Publish(topic string, msg interface{}) error
 }
@@ -15,4 +17,15 @@ type MessageBroker interface {
 	Publisher
 	Subscriber
 	Close() error
+}
+
+const SubscriberComponent = "Subscriber"
+const PublisherComponent = "Publisher"
+
+func LocateSubscriber() Subscriber {
+	return locator.Locate("Subscriber").(Subscriber)
+}
+
+func LocatePublisher() Publisher {
+	return locator.Locate("Publisher").(Publisher)
 }
