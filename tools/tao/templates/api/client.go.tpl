@@ -96,7 +96,7 @@ func (e *{{.Name}}Client) Name() string {
 }
 
 {{range .Methods -}}
-func (e *{{$serviceName}}Client) Handle{{.Name}}(f func(ctx context.Context, req *{{.Request}}) error) {
+func (e *{{$serviceName}}Client) {{.Name}}(f func(ctx context.Context, req *{{.Request}}) error) {
     fmt.Println("event client: subscribe {{$serviceName}}.{{.Name}}")
     _, _ = e.Subscribe("{{$serviceName}}.{{.Name}}", func(topic string, msg []byte) error {
         var req = new({{.Request}})
