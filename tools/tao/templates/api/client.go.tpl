@@ -4,6 +4,7 @@ package {{.Pkg}}
 import (
     "bytes"
     "context"
+    "fmt"
     "github.com/miraclew/tao/pkg/ce"
     "github.com/miraclew/tao/pkg/pb"
     "github.com/miraclew/tao/pkg/ac"
