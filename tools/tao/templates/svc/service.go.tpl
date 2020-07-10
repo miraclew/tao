@@ -3,7 +3,6 @@ package {{.Pkg}}svc
 
 import (
 	"context"
-	"{{.Module}}/locator"
 	"{{.Module}}/{{.Pkg}}"
 	"github.com/labstack/echo/v4"
 )
