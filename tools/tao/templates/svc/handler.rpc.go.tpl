@@ -11,11 +11,11 @@ import (
 
 {{range .Services -}}
 {{if eq .Type 1 -}}
-type handler struct {
-	Service {{$.Pkg}}.Service
+type rpcHandler struct {
+	Service *DefaultService
 }
 
-func (h *handler) RegisterRoutes(e *echo.Echo, m ...echo.MiddlewareFunc) {
+func (h *rpcHandler) RegisterRoutes(e *echo.Echo, m ...echo.MiddlewareFunc) {
 	{{- range .Methods}}
 	e.POST("/v1/{{$.Name|lower}}/{{.Name|lower}}", h.{{.Name}}, m...)
 	{{- end}}
@@ -23,7 +23,7 @@ func (h *handler) RegisterRoutes(e *echo.Echo, m ...echo.MiddlewareFunc) {
 
 {{- range .Methods}}
 
-func (h *handler) {{.Name}}(c echo.Context) error {
+func (h *rpcHandler) {{.Name}}(c echo.Context) error {
 	ctx := ac.FromEcho(c)
 	req := new({{$.Pkg}}.{{.Request}})
 	if err := c.Bind(req); err != nil {

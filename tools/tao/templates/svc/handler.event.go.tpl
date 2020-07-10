@@ -3,17 +3,16 @@ package {{.Pkg}}svc
 
 import (
 	"context"
-	"{{.Module}}/locator"
 	"{{.Module}}/{{.Pkg}}"
 )
 
 type eventHandler struct {
-	Service {{.Pkg}}.Service
+	Service *DefaultService
 }
 
 func (h eventHandler) Register() {
 	// example:
-	locator.{{.Name}}Event().HandleCreated(h.on{{.Name}}Created)
+	{{.Pkg}}.Locate{{.Name}}Event().HandleCreated(h.on{{.Name}}Created)
 }
 
 // example:

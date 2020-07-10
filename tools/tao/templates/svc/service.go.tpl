@@ -27,7 +27,7 @@ func (s *DefaultService) RegisterEventHandler() {
 }
 
 func (s *DefaultService) RegisterRouter(e *echo.Echo, m ...echo.MiddlewareFunc) {
-	h := handler{Service: s}
+	h := rpcHandler{Service: s}
 	h.RegisterRoutes(e, m...)
 }
 
