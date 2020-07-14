@@ -22,3 +22,17 @@ func (s Int64Slice) Has(item int64) bool {
 
 	return false
 }
+
+func UniqueInt64s(ss []int64) []int64 {
+	uniq := make(map[int64]bool)
+	for _, v := range ss {
+		uniq[v] = true
+	}
+
+	var res []int64
+	for key := range uniq {
+		res = append(res, key)
+	}
+
+	return res
+}
