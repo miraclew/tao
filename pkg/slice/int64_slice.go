@@ -36,3 +36,19 @@ func UniqueInt64s(ss []int64) []int64 {
 
 	return res
 }
+
+func RemoveInt64s(ss []int64, element int64) []int64 {
+	var index = -1
+	for i, v := range ss {
+		if v == element {
+			index = i
+			break
+		}
+	}
+
+	if index <= -1 {
+		return ss
+	}
+
+	return append(ss[:index], ss[index+1:]...)
+}
