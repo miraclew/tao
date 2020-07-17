@@ -18,6 +18,8 @@ import (
 )
 
 var _ = pb.Empty{}
+var _ = fmt.Sprintf
+var _ = broker.PublisherComponent
 
 {{range .Services -}}
 {{ $serviceName := .Name -}}
