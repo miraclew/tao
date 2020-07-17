@@ -21,6 +21,10 @@ func (s *DefaultService) Name() string {
 	return "{{.Name}}"
 }
 
+func (s *DefaultService) ClientContext(ctx context.Context) context.Context {
+	return context.WithValue(ctx, "Client", s.Name())
+}
+
 func (s *DefaultService) RegisterEventHandler() {
 	eh := eventHandler{s}
 	eh.Register()
