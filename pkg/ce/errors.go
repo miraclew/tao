@@ -108,3 +108,15 @@ func NotFoundError(err error) bool {
 
 	return false
 }
+
+func UnauthorizedError(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	if se, ok := err.(*Error); ok && se.Unauthorized() {
+		return true
+	}
+
+	return false
+}
