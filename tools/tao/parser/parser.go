@@ -60,6 +60,15 @@ func FileOption(proto *proto3.Proto, option string) (string, error) {
 	return "", fmt.Errorf("option %s undefined", option)
 }
 
+func Package(proto *proto3.Proto) string {
+	for _, entry := range proto.Entries {
+		if entry.Package != "" {
+			return entry.Package
+		}
+	}
+	return ""
+}
+
 func ResourceMessage(proto *proto3.Proto) (*proto3.Message, error) {
 	resourceName, err := ResourceName(proto)
 	if err != nil {

@@ -2,6 +2,8 @@ package golang
 
 import (
 	"fmt"
+	"github.com/miraclew/tao/tools/tao/parser"
+	"strings"
 
 	"github.com/miraclew/tao/pkg/slice"
 	"github.com/miraclew/tao/tools/tao/parser/proto3"
@@ -56,7 +58,6 @@ func Map(proto *proto3.Proto, useSnackCase bool) (*ProtoGolang, error) {
 	// services
 	sm := ServiceMapper{tm}
 	var services []*Service
-	var err error
 	for _, entry := range proto.Entries {
 		if entry.Service != nil {
 			service, err := sm.Map(entry.Service)
@@ -67,13 +68,15 @@ func Map(proto *proto3.Proto, useSnackCase bool) (*ProtoGolang, error) {
 		}
 	}
 
-	resource, err := FileOption(proto, "resource")
-	if err != nil {
-		return nil, err
-	}
+	//resource, err := FileOption(proto, "resource")
+	//if err != nil {
+	//	return nil, err
+	//}
+	protoPackage := parser.Package(proto)
+	parts := strings.Split(protoPackage, ".")
 
 	protoIR := &ProtoGolang{
-		Name:     resource,
+		Name:     strings.Title(parts[0]),
 		Enums:    enums,
 		Services: services,
 		Messages: messages,
