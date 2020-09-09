@@ -6,6 +6,7 @@ import "time"
 type Authority interface {
 	Issuer
 	Verifier
+	Revoker
 }
 
 type Issuer interface {
@@ -14,4 +15,8 @@ type Issuer interface {
 
 type Verifier interface {
 	Verify(token string) (*Identity, int64, error)
+}
+
+type Revoker interface {
+	Revoke(token string) error
 }

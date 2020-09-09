@@ -49,7 +49,10 @@ func NewMiddleware(authority auth.Verifier, skipPaths []string) echo.MiddlewareF
 				return c.JSON(http.StatusUnauthorized, echo.Map{"message": "authorization expired"})
 			}
 
-			c.Set(UserIdContextKey, identity)
+			c.Set(UserIdContextKey, &Session{
+				Identity: identity,
+				Authorization: authorization,
+			})
 			return next(c)
 		}
 	}
@@ -67,4 +70,9 @@ func getAuthorization(c echo.Context) string {
 		}
 	}
 	return token
+}
+
+type Session struct {
+	Identity *auth.Identity
+	Authorization string
 }

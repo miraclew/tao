@@ -21,6 +21,10 @@ type authority struct {
 	expireIn  int64
 }
 
+func (a *authority) Revoke(token string) error {
+	return nil
+}
+
 func (a *authority) Issue(identity *auth.Identity, duration time.Duration) (string, int64, error) {
 	if duration == 0 {
 		duration = time.Duration(a.expireIn) * time.Second
