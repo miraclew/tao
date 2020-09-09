@@ -95,7 +95,7 @@ func (p protoMapper) Map(proto *proto3.Proto) (*ir.ProtoIR, error) {
 
 	protoPackage := parser.Package(proto)
 	parts := strings.Split(protoPackage, ".")
-	name := strings.Title(parts[0])
+	name := strings.Title(parts[len(parts)-1])
 
 	protoIR := &ir.ProtoIR{
 		Package:  protoPackage,
