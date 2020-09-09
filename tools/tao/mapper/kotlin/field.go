@@ -3,7 +3,6 @@ package kotlin
 import (
 	"github.com/miraclew/tao/tools/tao/mapper/ir"
 	"github.com/miraclew/tao/tools/tao/parser/proto3"
-	"strings"
 )
 
 type fieldMapper struct {
@@ -36,7 +35,8 @@ func (f fieldMapper) Map(field *proto3.Field) (*ir.Field, error) {
 		enum:     isEnum,
 	}
 
-	name := strings.ToLower(field.Name[0:1]) + field.Name[1:]
+	//name := strings.ToLower(field.Name[0:1]) + field.Name[1:]
+	name := field.Name
 	v := &ir.Field{
 		Name: name,
 		Type: t,
