@@ -15,31 +15,19 @@ type Workspace struct {
 
 func DetectWorkspace(baseDir string) (*Workspace, error) {
 	var p Workspace
-	var err error
-	p.HomeDir, err = DetectGoProjectHome(baseDir)
-	if err != nil {
-		return nil, err
-	}
-
-	p.Module, err = DetectGoModule(p.HomeDir)
-	if err != nil {
-		return nil, err
-	}
-
-	//p.ResourceDirs, err = DetectServiceDirs(p.HomeDir)
+	//var err error
+	//p.HomeDir, err = DetectGoProjectHome(baseDir)
 	//if err != nil {
 	//	return nil, err
 	//}
 	//
-	//exists, err := ProtoFileExists(baseDir)
+	//p.Module, err = DetectGoModule(p.HomeDir)
 	//if err != nil {
 	//	return nil, err
 	//}
-	//if exists {
-	//	dir, _ := os.Getwd()
-	//	p.CurrentResource = filepath.Base(dir)
-	//}
 
+	p.HomeDir = baseDir
+	//
 	taoHomePath := filepath.Join(os.Getenv("HOME"), ".tao")
 	p.TemplateDir = filepath.Join(taoHomePath, "src/tools/tao/templates")
 
