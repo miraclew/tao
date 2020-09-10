@@ -1,8 +1,8 @@
 package ac
 
 import (
-	"github.com/miraclew/tao/pkg/auth"
 	"github.com/labstack/echo/v4"
+	"github.com/miraclew/tao/pkg/auth"
 	"net/http"
 	"os"
 	"strconv"
@@ -26,7 +26,7 @@ func NewMiddleware(authority auth.Verifier, skipPaths []string) echo.MiddlewareF
 
 			authorization := getAuthorization(c)
 			if authorization == "" {
-				return c.JSON(http.StatusUnauthorized, echo.Map{"message": "authorization invalid"})
+				return c.JSON(http.StatusUnauthorized, echo.Map{"Message": "authorization invalid"})
 			}
 
 			if isLocal && strings.HasPrefix(authorization, "FT_") {
@@ -43,14 +43,14 @@ func NewMiddleware(authority auth.Verifier, skipPaths []string) echo.MiddlewareF
 
 			identity, expireAt, err := authority.Verify(authorization)
 			if err != nil {
-				return c.JSON(http.StatusUnauthorized, echo.Map{"message": "authorization invalid"})
+				return c.JSON(http.StatusUnauthorized, echo.Map{"Message": "authorization invalid"})
 			}
 			if expireAt < time.Now().Unix() {
-				return c.JSON(http.StatusUnauthorized, echo.Map{"message": "authorization expired"})
+				return c.JSON(http.StatusUnauthorized, echo.Map{"Message": "authorization expired"})
 			}
 
 			c.Set(UserIdContextKey, &Session{
-				Identity: identity,
+				Identity:      identity,
 				Authorization: authorization,
 			})
 			return next(c)
@@ -73,6 +73,6 @@ func getAuthorization(c echo.Context) string {
 }
 
 type Session struct {
-	Identity *auth.Identity
+	Identity      *auth.Identity
 	Authorization string
 }
