@@ -26,7 +26,7 @@ func NewMiddleware(authority auth.Verifier, skipPaths []string) echo.MiddlewareF
 
 			authorization := getAuthorization(c)
 			if authorization == "" {
-				return c.JSON(http.StatusUnauthorized, echo.Map{"Message": "authorization invalid"})
+				return c.JSON(http.StatusUnauthorized, echo.Map{"Message": "authorization invalid", "Code": http.StatusUnauthorized})
 			}
 
 			if isLocal && strings.HasPrefix(authorization, "FT_") {
@@ -43,10 +43,10 @@ func NewMiddleware(authority auth.Verifier, skipPaths []string) echo.MiddlewareF
 
 			identity, expireAt, err := authority.Verify(authorization)
 			if err != nil {
-				return c.JSON(http.StatusUnauthorized, echo.Map{"Message": "authorization invalid"})
+				return c.JSON(http.StatusUnauthorized, echo.Map{"Message": "authorization invalid", "Code": http.StatusUnauthorized})
 			}
 			if expireAt < time.Now().Unix() {
-				return c.JSON(http.StatusUnauthorized, echo.Map{"Message": "authorization expired"})
+				return c.JSON(http.StatusUnauthorized, echo.Map{"Message": "authorization expired", "Code": http.StatusUnauthorized})
 			}
 
 			c.Set(UserIdContextKey, &Session{
