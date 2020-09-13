@@ -7,11 +7,12 @@ import (
 )
 
 type Config struct {
-	GoOutputDir    string
-	SwiftOutputDir string
-	DartOutputDir  string
-	UseSnackCase   bool
-	Dependencies   []string
+	GoOutputDir     string
+	SwiftOutputDir  string
+	KotlinOutputDir string
+	DartOutputDir   string
+	UseSnackCase    bool
+	Dependencies    []string
 }
 
 func NewConfig(homeDir string) (*Config, error) {

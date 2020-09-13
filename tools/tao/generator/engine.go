@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"github.com/miraclew/tao/tools/tao/mapper/kotlin"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -38,7 +39,12 @@ func NewEngineWithBaseDir(dir string) (*Engine, error) {
 		return nil, err
 	}
 
-	config, err := NewConfig(workspace.HomeDir)
+	//config, err := NewConfig(workspace.HomeDir)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//return &Engine{Workspace: workspace, Config: config}, nil
+	config, err := NewConfig(dir)
 	if err != nil {
 		return nil, err
 	}
@@ -201,6 +207,41 @@ func (e Engine) GenerateSwift(protoFile string) error {
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func (e Engine) GenerateKotlin(pbFile string) error {
+	res, err := parser.ParseProto3(pbFile)
+	if err != nil {
+		return err
+	}
+
+	pm := kotlin.NewProtoMapper()
+	model, err := pm.Map(res.Proto)
+	if err != nil {
+		return err
+	}
+
+	var fileName = model.Name + ".kt"
+	if e.Config != nil && e.Config.KotlinOutputDir != "" {
+		fileName = filepath.Join(e.Config.KotlinOutputDir, fileName)
+	}
+
+	outputFile, err := os.Create(fileName)
+	if err != nil {
+		return err
+	}
+	tplFile := filepath.Join(e.Workspace.TemplateDir, "sdk/kotlin/client.kotlin.tpl")
+
+	tpl, err := template.New(filepath.Base(tplFile)).Funcs(sprig.TxtFuncMap()).ParseFiles(tplFile)
+	if err != nil {
+		return err
+	}
+	err = tpl.Execute(outputFile, model)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 

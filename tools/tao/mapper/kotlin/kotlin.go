@@ -1,20 +1,26 @@
-package golang
+package kotlin
 
 import (
-	"fmt"
-	"github.com/miraclew/tao/tools/tao/parser"
-	"strings"
-
 	"github.com/miraclew/tao/pkg/slice"
+	"github.com/miraclew/tao/tools/tao/mapper/ir"
+	"github.com/miraclew/tao/tools/tao/parser"
 	"github.com/miraclew/tao/tools/tao/parser/proto3"
+	"strings"
 )
 
-func Map(proto *proto3.Proto, useSnackCase bool) (*ProtoGolang, error) {
-	var tm TypeMapper
+type protoMapper struct {
+}
+
+func NewProtoMapper() ir.ProtoMapper {
+	return &protoMapper{}
+}
+
+func (p protoMapper) Map(proto *proto3.Proto) (*ir.ProtoIR, error) {
+	var tm typeMapper
+	em := ir.NewEnumMapper()
 
 	// enums
-	em := EnumMapper{}
-	var enums []*Enum
+	var enums []*ir.Enum
 	for _, entry := range proto.Entries {
 		if entry.Message != nil {
 			for _, entry := range entry.Message.Entries {
@@ -35,16 +41,23 @@ func Map(proto *proto3.Proto, useSnackCase bool) (*ProtoGolang, error) {
 			enums = append(enums, e)
 		}
 	}
-	// messages
-	mm := MessageMapper{
-		FieldMapper:  FieldMapper{tm, enums},
-		UseSnackCase: useSnackCase,
+
+	fm := &fieldMapper{
+		TypeMapper: tm,
+		Enums:      enums,
 	}
-	var ignoreMessages = slice.StringSlice{"Time", "Any", "Key"}
-	var messages []*Message
+
+	mm := ir.NewMessageMapper(fm)
+	sm := ir.NewServiceMapper(tm)
+
+	var ignoreMessages = slice.StringSlice{"Time", "Any", "Empty", "Key"}
+	var messages []*ir.Message
 	for _, entry := range proto.Entries {
 		if entry.Message != nil {
 			if ignoreMessages.Has(entry.Message.Name) {
+				continue
+			}
+			if strings.HasSuffix(entry.Message.Name, "Event") {
 				continue
 			}
 			m, err := mm.Map(entry.Message)
@@ -56,27 +69,37 @@ func Map(proto *proto3.Proto, useSnackCase bool) (*ProtoGolang, error) {
 	}
 
 	// services
-	sm := ServiceMapper{tm}
-	var services []*Service
+	var services []*ir.Service
+
+	//var err error
 	for _, entry := range proto.Entries {
 		if entry.Service != nil {
-			service, err := sm.Map(entry.Service)
-			if err != nil {
-				return nil, err
+			if strings.HasSuffix(entry.Service.Name, "Rpc") {
+				service, err := sm.Map(entry.Service)
+				if err != nil {
+					return nil, err
+				}
+				services = append(services, service)
 			}
-			services = append(services, service)
 		}
 	}
 
-	//resource, err := FileOption(proto, "resource")
+	//resource, err := ir.FileOption(proto, "resource")
 	//if err != nil {
 	//	return nil, err
 	//}
+	//app, err := ir.FileOption(proto, "app")
+	//if err != nil {
+	//	return nil, err
+	//}
+
 	protoPackage := parser.Package(proto)
 	parts := strings.Split(protoPackage, ".")
 	name := strings.Title(parts[len(parts)-1])
 
-	protoIR := &ProtoGolang{
+	protoIR := &ir.ProtoIR{
+		Package:  protoPackage,
+		App:      name,
 		Name:     name,
 		Enums:    enums,
 		Services: services,
@@ -84,13 +107,4 @@ func Map(proto *proto3.Proto, useSnackCase bool) (*ProtoGolang, error) {
 	}
 
 	return protoIR, nil
-}
-
-func FileOption(proto *proto3.Proto, option string) (string, error) {
-	for _, entry := range proto.Entries {
-		if entry.Option != nil && entry.Option.Name == option {
-			return *entry.Option.Value.String, nil
-		}
-	}
-	return "", fmt.Errorf("option %s undefined", option)
 }

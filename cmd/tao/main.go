@@ -121,6 +121,14 @@ func main() {
 			SkipFlagParsing: true,
 		},
 		{
+			Name:  "kotlin",
+			Usage: "创建Kotlin客户端",
+			Action: func(context *cli.Context) error {
+				return e.GenerateKotlin(context.Args().First())
+			},
+			SkipFlagParsing: true,
+		},
+		{
 			Name:  "dart",
 			Usage: "创建Dart客户端",
 			Action: func(context *cli.Context) error {

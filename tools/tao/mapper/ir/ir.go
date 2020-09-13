@@ -7,6 +7,7 @@ import (
 
 // ProtoIR is proto intermediate representative
 type ProtoIR struct {
+	Package  string
 	Name     string // api name, cap camel
 	App      string
 	Enums    []*Enum

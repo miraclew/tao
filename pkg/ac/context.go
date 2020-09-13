@@ -61,9 +61,12 @@ func FromEcho(ctx echo.Context) context.Context {
 	v := ctx.Get(UserIdContextKey)
 	c := context.WithValue(ctx.Request().Context(), UserIdContextKey, v)
 
+	sess := v.(*Session)
+
 	return &aContext{
 		Context:  c,
-		identity: v.(*auth.Identity),
+		identity: sess.Identity,
+		authorization: sess.Authorization,
 	}
 }
 
@@ -75,25 +78,29 @@ func FromContext(ctx context.Context) Context {
 
 	if ctx.Value("Client") != nil {
 		internal := ctx.Value("Client").(string)
-		var v *auth.Identity
+		var v *Session
 		if ctx.Value(UserIdContextKey) != nil {
-			v = ctx.Value(UserIdContextKey).(*auth.Identity)
+			v = ctx.Value(UserIdContextKey).(*Session)
 		} else {
-			v = &auth.Identity{
-				Internal: internal,
+			v = &Session{
+				Identity: &auth.Identity{
+					Internal: internal,
+				},
 			}
 		}
 
 		return &aContext{
 			Context:  ctx,
-			identity: v,
+			identity: v.Identity,
+			authorization: v.Authorization,
 		}
 	}
 
-	v := ctx.Value(UserIdContextKey).(*auth.Identity)
+	v := ctx.Value(UserIdContextKey).(*Session)
 	return &aContext{
 		Context:  ctx,
-		identity: v,
+		identity: v.Identity,
+		authorization: v.Authorization,
 	}
 }
 

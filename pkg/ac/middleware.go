@@ -1,8 +1,8 @@
 package ac
 
 import (
-	"github.com/miraclew/tao/pkg/auth"
 	"github.com/labstack/echo/v4"
+	"github.com/miraclew/tao/pkg/auth"
 	"net/http"
 	"os"
 	"strconv"
@@ -26,7 +26,7 @@ func NewMiddleware(authority auth.Verifier, skipPaths []string) echo.MiddlewareF
 
 			authorization := getAuthorization(c)
 			if authorization == "" {
-				return c.JSON(http.StatusUnauthorized, echo.Map{"message": "authorization invalid"})
+				return c.JSON(http.StatusUnauthorized, echo.Map{"Message": "authorization invalid", "Code": http.StatusUnauthorized})
 			}
 
 			if isLocal && strings.HasPrefix(authorization, "FT_") {
@@ -43,13 +43,16 @@ func NewMiddleware(authority auth.Verifier, skipPaths []string) echo.MiddlewareF
 
 			identity, expireAt, err := authority.Verify(authorization)
 			if err != nil {
-				return c.JSON(http.StatusUnauthorized, echo.Map{"message": "authorization invalid"})
+				return c.JSON(http.StatusUnauthorized, echo.Map{"Message": "authorization invalid", "Code": http.StatusUnauthorized})
 			}
 			if expireAt < time.Now().Unix() {
-				return c.JSON(http.StatusUnauthorized, echo.Map{"message": "authorization expired"})
+				return c.JSON(http.StatusUnauthorized, echo.Map{"Message": "authorization expired", "Code": http.StatusUnauthorized})
 			}
 
-			c.Set(UserIdContextKey, identity)
+			c.Set(UserIdContextKey, &Session{
+				Identity:      identity,
+				Authorization: authorization,
+			})
 			return next(c)
 		}
 	}
@@ -67,4 +70,9 @@ func getAuthorization(c echo.Context) string {
 		}
 	}
 	return token
+}
+
+type Session struct {
+	Identity      *auth.Identity
+	Authorization string
 }
