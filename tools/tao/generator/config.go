@@ -17,9 +17,13 @@ type Config struct {
 func NewConfig(homeDir string) (*Config, error) {
 	var conf Config
 
-	configFilePath := filepath.Join(os.Getenv("HOME"), ".tao/tao.json")
+	userHome, err := os.UserHomeDir()
+	if err != nil {
+		return nil, err
+	}
+	configFilePath := filepath.Join(userHome, ".tao/tao.json")
 
-	err := load(&conf, configFilePath)
+	err = load(&conf, configFilePath)
 	if err != nil {
 		return nil, err
 	}

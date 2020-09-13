@@ -40,7 +40,11 @@ func DetectWorkspace(baseDir string) (*Workspace, error) {
 	//	p.CurrentResource = filepath.Base(dir)
 	//}
 
-	taoHomePath := filepath.Join(os.Getenv("HOME"), ".tao")
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return nil, err
+	}
+	taoHomePath := filepath.Join(homeDir, ".tao")
 	p.TemplateDir = filepath.Join(taoHomePath, "src/tools/tao/templates")
 
 	return &p, nil

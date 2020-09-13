@@ -436,8 +436,12 @@ func (e Engine) GenerateRepo() error {
 }
 
 func (e Engine) UpdateTemplates() error {
-	taoHomePath := filepath.Join(os.Getenv("HOME"), ".tao")
-	_, err := os.Stat(taoHomePath)
+	userHome, err := os.UserHomeDir()
+	if err != nil {
+		return err
+	}
+	taoHomePath := filepath.Join(userHome, ".tao")
+	_, err = os.Stat(taoHomePath)
 	if err != nil {
 		if !os.IsNotExist(err) {
 			return err
