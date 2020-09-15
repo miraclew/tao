@@ -23,6 +23,10 @@ func (err *Error) BadRequest() bool {
 	return err.Code == http.StatusBadRequest
 }
 
+func (err *Error) Forbidden() bool {
+	return err.Code == http.StatusForbidden
+}
+
 func (err *Error) Error() string {
 	if err.Message == "" {
 		return http.StatusText(err.Code)
@@ -115,6 +119,18 @@ func UnauthorizedError(err error) bool {
 	}
 
 	if se, ok := err.(*Error); ok && se.Unauthorized() {
+		return true
+	}
+
+	return false
+}
+
+func ForbiddenError(err error) bool {
+	if err == nil {
+		return false
+	}
+
+	if se, ok := err.(*Error); ok && se.Forbidden() {
 		return true
 	}
 
