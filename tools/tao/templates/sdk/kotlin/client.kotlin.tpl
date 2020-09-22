@@ -23,6 +23,6 @@ public interface {{.Name}}Service {
 {{- if gt $n 0 -}}
 data class {{.Name}}({{range $i, $elem := .Fields}}val {{.Name}}: {{.Type.String}}{{if ne (add $i 1) $n}},{{end}} {{end}})
 {{- else -}}
-data class {{.Name}}(val _reserved:Int)
+data class {{.Name}}(val _reserved:Int=0)
 {{- end}}
 {{end}}
