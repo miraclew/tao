@@ -6,7 +6,7 @@ import retrofit2.http.Body
 import retrofit2.http.POST
 
 {{ range .Enums }}
-enum class {{.Name}} { {{range .Values}} {{.Name}}, {{end }} }
+enum class {{.Name}}(val value: Int) { {{range .Values}} {{.Name}}({{.Value}}), {{end }} }
 {{- end }}
 
 {{ range .Services}}
