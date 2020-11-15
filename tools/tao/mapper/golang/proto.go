@@ -83,7 +83,7 @@ type Type struct {
 
 func (t Type) String() string {
 	var s = t.Name
-	if !t.Scalar && !t.Enum && !t.Map && t.Name != "time.Time" {
+	if !t.Scalar && !t.Enum && !t.Map && t.Name != "time.Time" && t.Name != "interface{}" {
 		s = "*" + s
 	}
 	if t.Repeated {
