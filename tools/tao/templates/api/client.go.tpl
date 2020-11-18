@@ -100,8 +100,8 @@ func (e *{{.Name}}Client) Name() string {
 
 {{range .Methods -}}
 func (e *{{$serviceName}}Client) {{.Name}}(f func(ctx context.Context, req *{{.Request}}) error) {
-    fmt.Println("event client: subscribe {{$serviceName}}.{{.Name}}")
-    _, _ = e.Subscribe("{{$serviceName}}.{{.Name}}", func(topic string, msg []byte) error {
+    fmt.Println("event client: subscribe {{$serviceName}}.{{.Request}}")
+    _, _ = e.Subscribe("{{$serviceName}}.{{.Request}}", func(topic string, msg []byte) error {
         var req = new({{.Request}})
         err := json.Unmarshal(msg, req)
         if err != nil {
