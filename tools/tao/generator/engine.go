@@ -410,7 +410,6 @@ func (e Engine) GenerateService(protoFile string, useDefault bool) error {
 	if err != nil {
 		return err
 	}
-	protoGolang.Module = e.Workspace.Module
 
 	files := []string{"handler.rpc", "handler.event", "service"}
 	tplFiles := []string{"handler.rpc", "handler.event", "service"}
