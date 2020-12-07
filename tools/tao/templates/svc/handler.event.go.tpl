@@ -11,11 +11,9 @@ type eventHandler struct {
 }
 
 func (h eventHandler) Register() {
-	// example:
 	{{.Pkg}}.Locate{{.Name}}Event().HandleCreated(h.on{{.Name}}Created)
 }
 
-// example:
 func (h eventHandler) on{{.Name}}Created(ctx context.Context, req *{{.Pkg}}.CreatedEvent) error {
 	return nil
 }

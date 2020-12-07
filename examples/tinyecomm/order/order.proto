@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package com.github.miraclew.tao.examples.tinnycomm.order;
+option go_package = "github.com/miraclew/tao/examples/tinyecomm/order";
+
+service OrderRpc {
+  rpc CreateOrder(CreateOrderRequest) returns (CreateOrderResponse);
+}
+
+service OrderEvent {
+  rpc HandleCreated(CreatedEvent) returns (Empty);
+}
+
+message CreateOrderRequest {
+  repeated OrderItemLine Lines = 1;
+}
+
+message CreateOrderResponse {
+  int64 OrderId = 1;
+}
+
+message OrderItemLine {
+  int64 ProductId = 1;
+  int64 Quantity = 2;
+}
+
+// Events
+
+message CreatedEvent {
+  int64 OrderId = 1;
+}
+
+message Empty {}
