@@ -1,4 +1,4 @@
-Tao is a protocol and interface first micro-service approach.
+Tao is a protocol first micro-service approach and toolset.
 
 This project is in very early development stage, things may changes frequently.
 
