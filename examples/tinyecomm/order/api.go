@@ -39,7 +39,7 @@ type CreateOrderResponse struct {
 
 type OrderItemLine struct {
 	ProductId int64
-	Quantity  int64
+	Quantity int64
 }
 
 type CreatedEvent struct {

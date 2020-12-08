@@ -2,8 +2,8 @@ package ordersvc
 
 import (
 	"context"
-	"github.com/labstack/echo/v4"
 	"github.com/miraclew/tao/examples/tinyecomm/order"
+	"github.com/labstack/echo/v4"
 )
 
 type DefaultService struct {
@@ -11,7 +11,8 @@ type DefaultService struct {
 
 func NewService() *DefaultService {
 	s := &DefaultService{}
-
+	
+	
 	return s
 }
 
@@ -39,3 +40,4 @@ func (s *DefaultService) CreateOrder(ctx context.Context, req *order.CreateOrder
 func (s *DefaultService) HandleCreated(ctx context.Context, req *order.CreatedEvent) (*order.Empty, error) {
 	panic("not implemented")
 }
+

@@ -1,10 +1,11 @@
 package ordersvc
 
 import (
-	"github.com/labstack/echo/v4"
 	"github.com/miraclew/tao/examples/tinyecomm/order"
 	"github.com/miraclew/tao/pkg/ac"
 	"github.com/miraclew/tao/pkg/validate"
+	"github.com/miraclew/tao/pkg/handler"
+	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
 )
 
@@ -31,5 +32,5 @@ func (h *rpcHandler) CreateOrder(c echo.Context) error {
 		return errors.Wrap(err, "handler: CreateOrder error")
 	}
 
-	return c.JSON(200, res)
+	return handler.JSON(c, res, err)
 }

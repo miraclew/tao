@@ -5,6 +5,7 @@ import (
 	"{{.Module}}/{{.Pkg}}"
 	"github.com/miraclew/tao/pkg/ac"
 	"github.com/miraclew/tao/pkg/validate"
+	"github.com/miraclew/tao/pkg/handler"
 	"github.com/labstack/echo/v4"
 	"github.com/pkg/errors"
 )
@@ -38,7 +39,7 @@ func (h *rpcHandler) {{.Name}}(c echo.Context) error {
 		return errors.Wrap(err, "handler: {{.Name}} error")
 	}
 
-	return c.JSON(200, res)
+	return handler.JSON(c, res, err)
 }
 {{- end}}
 {{- end}}

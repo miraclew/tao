@@ -23,9 +23,9 @@ sub-commands
  * ```tao svc``` generate service implementation go code, include service, handler etc.
  * ```tao sql``` generate SQL schema of model message in .proto file
  * ```tao doc``` generate OpenAPI v3 files
- * ```tao dart``` generate dart client code
- * ```tao android``` generate android client sdk. TODO
- * ```tao ios``` generate iOS client sdk. TODO
+ * ```tao dart``` generate Flutter/Dart client code
+ * ```tao kotlin``` generate Android/Kotlin client sdk.
+ * ```tao swift``` generate iOS/Swift client sdk.
 
 ### How ```tao``` generators works
 
@@ -42,8 +42,6 @@ We introduce a locator package as the IOC container.
  * Implement service
 
 ### Examples
-
-
 
  
 ## TODO
